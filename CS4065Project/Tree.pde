@@ -1,3 +1,9 @@
+/**
+ * Class Node
+ * 
+ * Contains a label and content. Links to 0-to-1 parent and 0-to-many
+ * chilren nodes.
+ */
 class Node {
   ArrayList<Node> children;
   Node parent;
@@ -29,6 +35,12 @@ class Node {
   }
 }
 
+/**
+ * Class Tree
+ * 
+ * Essentially a wrapper for the root node. Contains methods that
+ * help process the tree as a whole.
+ */
 class Tree {
   Node root;
   
@@ -47,5 +59,44 @@ class Tree {
       }
     }
     return currentNode;
+  }
+}
+
+/**
+ * Class TreeCrawler
+ * 
+ * Utility class that helps with traversing up and down trees.
+ */
+class TreeCrawler {
+  Node currentNode;
+  Node root;
+  
+  TreeCrawler(Node root) {
+    this.root = root;
+    this.currentNode = root;
+  }
+  
+  // Goes to child node with the provided label.
+  // If this isn't present, return null;
+  Node crawlDown(String label) {
+    Node next = this.currentNode.getChildFromLabel(label);
+    if (next != null) {
+      currentNode = next;
+    }
+    return next;
+  }
+  
+  // Goes to parent node. If root, return null.
+  Node crawlUp() {
+    if (currentNode.parent == null) {
+      return null;
+    }
+    currentNode = currentNode.parent;
+    return currentNode;
+  }
+  
+  // Reset current node to the tree root.
+  void rewind() {
+    currentNode = root;
   }
 }

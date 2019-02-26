@@ -11,6 +11,4 @@ class Button {
     this.label = label;
     this.bColor = bColor;
   }
-  
-  
 }
