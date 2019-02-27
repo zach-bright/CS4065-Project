@@ -1,32 +1,32 @@
 /**
- * Class Node
+ * Class TreeNode
  * 
  * Contains a label and content. Links to 0-to-1 parent and 0-to-many
- * chilren nodes.
+ * chilren TreeNodes.
  */
-class Node {
-  ArrayList<Node> children;
-  Node parent;
+class TreeNode {
+  ArrayList<TreeNode> children;
+  TreeNode parent;
   String content, label;
   
-  Node(String content, String label, Node parent) {
+  TreeNode(String content, String label, TreeNode parent) {
     this.content = content;
     this.label = label;
     this.parent = parent;
     children = new ArrayList<>();
   }
   
-  void addChild(Node child) {
+  void addChild(TreeNode child) {
     children.add(child);
   }
   
-  ArrayList<Node> getChildren() {
+  ArrayList<TreeNode> getChildren() {
     return children;
   }
   
   // Search for child containing the label.
-  Node getChildFromLabel(String label) {
-    for (Node n : children) {
+  TreeNode getChildFromLabel(String label) {
+    for (TreeNode n : children) {
       if (n.label.equals(label)) {
         return n;
       }
@@ -38,27 +38,27 @@ class Node {
 /**
  * Class Tree
  * 
- * Essentially a wrapper for the root node. Contains methods that
+ * Essentially a wrapper for the root TreeNode. Contains methods that
  * help process the tree as a whole.
  */
 class Tree {
-  Node root;
+  TreeNode root;
   
-  Tree(Node root) {
+  Tree(TreeNode root) {
     this.root = root;
   }
   
-  // Trace a series of labels and return the node it leads to.
+  // Trace a series of labels and return the TreeNode it leads to.
   // If a step fails, return null.
-  Node tracePath(String[] labelPath) {
-    Node currentNode = root;
+  TreeNode tracePath(String[] labelPath) {
+    TreeNode currentTreeNode = root;
     for (String label : labelPath) {
-      currentNode = root.getChildFromLabel(label);
-      if (currentNode == null) {
+      currentTreeNode = root.getChildFromLabel(label);
+      if (currentTreeNode == null) {
         return null;
       }
     }
-    return currentNode;
+    return currentTreeNode;
   }
 }
 
@@ -68,35 +68,35 @@ class Tree {
  * Utility class that helps with traversing up and down trees.
  */
 class TreeCrawler {
-  Node currentNode;
-  Node root;
+  TreeNode currentTreeNode;
+  TreeNode root;
   
-  TreeCrawler(Node root) {
+  TreeCrawler(TreeNode root) {
     this.root = root;
-    this.currentNode = root;
+    this.currentTreeNode = root;
   }
   
-  // Goes to child node with the provided label.
+  // Goes to child TreeNode with the provided label.
   // If this isn't present, return null;
-  Node crawlDown(String label) {
-    Node next = this.currentNode.getChildFromLabel(label);
+  TreeNode crawlDown(String label) {
+    TreeNode next = this.currentTreeNode.getChildFromLabel(label);
     if (next != null) {
-      currentNode = next;
+      currentTreeNode = next;
     }
     return next;
   }
   
-  // Goes to parent node. If root, return null.
-  Node crawlUp() {
-    if (currentNode.parent == null) {
+  // Goes to parent TreeNode. If root, return null.
+  TreeNode crawlUp() {
+    if (currentTreeNode.parent == null) {
       return null;
     }
-    currentNode = currentNode.parent;
-    return currentNode;
+    currentTreeNode = currentTreeNode.parent;
+    return currentTreeNode;
   }
   
-  // Reset current node to the tree root.
+  // Reset current TreeNode to the tree root.
   void rewind() {
-    currentNode = root;
+    currentTreeNode = root;
   }
 }
