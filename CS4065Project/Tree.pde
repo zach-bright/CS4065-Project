@@ -38,14 +38,40 @@ class TreeNode {
 /**
  * Class Tree
  * 
- * Essentially a wrapper for the root TreeNode. Contains methods that
- * help process the tree as a whole.
+ * Contains a root node and methods to add or search down paths. Also, the 
+ * ability to crawl up and down the tree is provided.
  */
 class Tree {
+  TreeNode currentTreeNode;
   TreeNode root;
   
   Tree(TreeNode root) {
     this.root = root;
+    this.currentTreeNode = root;
+  }
+  
+  // Follows a path down from root, creating nodes as necessary, and places  
+  // a new node containing the provided content at the last place.
+  void addNodeToPath(String content, String[] labelPath) {
+    TreeNode currentNode = root;
+    
+    // Traverse down (making new nodes as necessary) to 2nd-last label.
+    for (int i = 0; i < labelPath.length - 1; i++) {
+      String label = labelPath[i];
+      TreeNode nextNode = currentNode.getChildFromLabel(label);
+      
+      // Create nodes if necessary.
+      if (nextNode == null) {
+        nextNode = new TreeNode(null, label, currentNode);
+        currentNode.addChild(nextNode);
+      }
+      
+      currentNode = nextNode;
+    }
+    
+    // Create new node and add it.
+    TreeNode newNode = new TreeNode(content, labelPath[labelPath.length - 1], currentNode);
+    currentNode.addChild(newNode);
   }
   
   // Trace a series of labels and return the TreeNode it leads to.
@@ -59,21 +85,6 @@ class Tree {
       }
     }
     return currentTreeNode;
-  }
-}
-
-/**
- * Class TreeCrawler
- * 
- * Utility class that helps with traversing up and down trees.
- */
-class TreeCrawler {
-  TreeNode currentTreeNode;
-  TreeNode root;
-  
-  TreeCrawler(TreeNode root) {
-    this.root = root;
-    this.currentTreeNode = root;
   }
   
   // Goes to child TreeNode with the provided label.
