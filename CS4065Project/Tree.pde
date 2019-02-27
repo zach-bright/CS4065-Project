@@ -77,7 +77,7 @@ class TreeCrawler {
   }
   
   // Goes to child TreeNode with the provided label.
-  // If this isn't present, return null;
+  // If this isn't present, return null and stay.
   TreeNode crawlDown(String label) {
     TreeNode next = this.currentTreeNode.getChildFromLabel(label);
     if (next != null) {
@@ -86,7 +86,7 @@ class TreeCrawler {
     return next;
   }
   
-  // Goes to parent TreeNode. If root, return null.
+  // Goes to parent TreeNode. If root, return null and stay.
   TreeNode crawlUp() {
     if (currentTreeNode.parent == null) {
       return null;
