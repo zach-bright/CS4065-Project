@@ -11,7 +11,7 @@ class MapNode {
   MapNode(String label, String content) {
     this.label = label;
     this.content = content;
-    this.connectedNodes = new ArrayList<>();
+    this.connectedNodes = new ArrayList<MapNode>();
   }
   
   void addConnection(MapNode node) {

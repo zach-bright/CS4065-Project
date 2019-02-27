@@ -13,7 +13,7 @@ class TreeNode {
     this.content = content;
     this.label = label;
     this.parent = parent;
-    children = new ArrayList<>();
+    children = new ArrayList<TreeNode>();
   }
   
   void addChild(TreeNode child) {
