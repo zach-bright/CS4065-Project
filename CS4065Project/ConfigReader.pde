@@ -24,10 +24,10 @@ class ConfigReader {
       
       // Config lines contain some content (e.g. p), a space, 
       // and a joystick path (e.g. UUD)
-      String[] splitLine = line.split(" ");
-      String content = splitLine[0].trim();
+      String[] splitLine = line.trim().split(" ");
+      String content = splitLine[0];
       // Need to split the path string into individual directions (e.g. U)
-      String[] path = splitLine[1].trim().split("");
+      String[] path = splitLine[1].split("");
       // Make sure path is valid before adding to tree.
       if (!this.validPath(path)) {
         throw new IOException("A path was invalid.");
