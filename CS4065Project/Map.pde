@@ -4,11 +4,12 @@
  * Contains label and content, and connects to surrounding
  * MapNodes bidirectionally.
  */
-class MapNode {
+class MapNode<T> {
   ArrayList<MapNode> connectedNodes;
-  String label, content;
+  String content;
+  T label;
   
-  MapNode(String label, String content) {
+  MapNode(String content, T label) {
     this.label = label;
     this.content = content;
     this.connectedNodes = new ArrayList<MapNode>();
@@ -23,7 +24,7 @@ class MapNode {
   }
   
   // Search for child containing the label.
-  MapNode getChildFromLabel(String label) {
+  MapNode getChildFromLabel(T label) {
     for (MapNode n : connectedNodes) {
       if (n.label.equals(label)) {
         return n;
@@ -39,23 +40,23 @@ class MapNode {
  * Contains a list of nodes. Helps with traversal by containing
  * a current node + methods to move to surrounding nodes.
  */
-class Map {
-  ArrayList<MapNode> nodes;
+class Map<T> {
+  ArrayList<MapNode<T>> nodes;
   MapNode currentNode;
   
-  Map(ArrayList<MapNode> nodes, int startingIndex) {
+  Map(ArrayList<MapNode<T>> nodes, int startingIndex) {
     this.nodes = nodes;
     currentNode = nodes.get(startingIndex);
   }
   
   Map() {
-    this.nodes = new ArrayList<MapNode>();
+    this.nodes = new ArrayList<MapNode<T>>();
     currentNode = null;
   }
   
   // Crawl to a node with provided label. If none is found, 
   // return null and stay.
-  MapNode crawl(String label) {
+  MapNode crawl(T label) {
     MapNode next = this.currentNode.getChildFromLabel(label);
     if (next != null) {
       currentNode = next;

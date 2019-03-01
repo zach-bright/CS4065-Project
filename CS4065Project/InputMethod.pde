@@ -32,19 +32,19 @@ class WASD extends InputMethod {
     // Convert the key from the event into a direction.
     // I really if-else chains but its easy, so w/e.
     char k = event.getKey();
-    String direction;
+    Direction direction;
     if (k == ENTER) {
       // Enter key accepts current selection.
       kbModule.accept();
       return;
     } else if (k == 'w') {
-      direction = "U";
+      direction = Direction.UP;
     } else if (k == 'a') {
-      direction = "L";
+      direction = Direction.LEFT;
     } else if (k == 's') {
-      direction = "D";
+      direction = Direction.DOWN;
     } else if (k == 'd') {
-      direction = "R";
+      direction = Direction.RIGHT;
     } else {
       return;
     }
