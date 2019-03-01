@@ -15,19 +15,14 @@ class ConfigReader {
   
   // Construct an H4 tree from the saved config file.
   // Doesn't need to be that fast, because we only call it once.
-  public Tree buildH4Tree() throws IOException {
+  public Tree<Direction> buildH4Tree() throws IOException {
     TreeNode<Direction> root = new TreeNode("", "", null);
     Tree<Direction> h4Tree = new Tree(root);
     
     // Run through every line in the file.
     String line;
     while ((line = configReader.readLine()) != null) {
-      try {
-        line = configReader.readLine();
-      } catch (IOException e) {
-        // TODO: handle ioexception
-        return null;
-      }
+      line = configReader.readLine();
       
       // Config lines contain some content (e.g. p), a space, 
       // and a joystick path (e.g. UUD).
@@ -41,5 +36,12 @@ class ConfigReader {
     }
     
     return h4Tree;
+  }
+  
+  // Construct a Map from a saved config file, to be used
+  // in the soft keyboard.
+  public Map<Direction> buildSoftMap() throws IOException {
+    // Config contains a key and its surrounding keys, in order U, D, L, R.
+    return null;
   }
 }

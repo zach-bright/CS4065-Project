@@ -11,20 +11,23 @@ interface KeyboardModule {
  * Rendering, handling the H4 tree structure, etc.
  */
 class H4Keyboard implements KeyboardModule {
-  Tree h4Tree;
+  Tree<Direction> h4Tree;
   
-  H4Keyboard(PApplet applet, Tree h4Tree) {
-    
+  H4Keyboard(Tree<Direction> h4Tree) {
+    this.h4Tree = h4Tree;
   }
   
+  // Draw the H4 keyboard.
   void render() {
     
   }
   
+  // Accept the current selection in the tree.
   void accept() {
     
   }
   
+  // Move along the tree in the direction.
   void move(Direction direction) {
     
   }
@@ -35,10 +38,12 @@ class SoftKeyboard implements KeyboardModule {
     
   }
   
+  // 
   void accept() {
     
   }
   
+  // Move along the map in a direction.
   void move(Direction direction) {
     
   }

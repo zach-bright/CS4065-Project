@@ -41,10 +41,10 @@ void setup() {
     // Construct the H4 Tree.
     configFile = new BufferedReader(new FileReader(configPath + File.separator + configH4));
     ConfigReader cr = new ConfigReader(configFile);
-    Tree tc = cr.buildH4Tree();
+    Tree<Direction> tc = cr.buildH4Tree();
     
     // Create keyboard module, attach the tree, and register and input method.
-    kbModule = new H4Keyboard(this, tc);
+    kbModule = new H4Keyboard(tc);
     inMethod = new WASD(this, kbModule);
   } catch (FileNotFoundException fnfe) {
     // TODO: add error for missing config
