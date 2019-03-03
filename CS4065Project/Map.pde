@@ -63,4 +63,8 @@ class Map<T> {
     }
     return next;
   }
+  
+  String getCurrentContent() {
+    return this.currentNode.content;
+  }
 }

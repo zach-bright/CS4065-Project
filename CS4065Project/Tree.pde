@@ -111,4 +111,8 @@ class Tree<T> {
   void rewind() {
     currentTreeNode = root;
   }
+  
+  String getCurrentContent() {
+    return this.currentTreeNode.content;
+  }
 }

@@ -9,6 +9,7 @@ interface KeyboardModule {
   abstract void render();
   abstract void accept();
   abstract void move(Direction direction);
+  abstract String getEnteredText();
 }
 
 /**
@@ -19,6 +20,7 @@ interface KeyboardModule {
  */
 class H4Keyboard implements KeyboardModule {
   Tree<Direction> h4Tree;
+  String enteredText = "";
   
   H4Keyboard(Tree<Direction> h4Tree) {
     this.h4Tree = h4Tree;
@@ -29,14 +31,24 @@ class H4Keyboard implements KeyboardModule {
     
   }
   
-  // Accept the current selection in the tree.
+  // Accept the current selection and add to text.
   void accept() {
+    String content = h4Tree.getCurrentContent();
+    if (content != null) {
+      return;
+    }
     
+    enteredText += content;
+    h4Tree.rewind();
   }
   
-  // Move along the tree in the direction.
+  // Move along the tree in a direction.
   void move(Direction direction) {
-    
+    h4Tree.crawlDown(direction);
+  }
+  
+  String getEnteredText() {
+    return this.enteredText;
   }
 }
 
@@ -47,18 +59,30 @@ class H4Keyboard implements KeyboardModule {
  * digital keyboards on video game consoles.
  */
 class SoftKeyboard implements KeyboardModule {
+  Map<Direction> softMap;
+  String enteredText = "";
+  
+  SoftKeyboard(Map<Direction> softMap) {
+    this.softMap = softMap;
+  }
+  
+  // Draw the soft keyboard.
   void render() {
     
   }
   
-  // 
+  // Accept current selection and add to text.
   void accept() {
-    
+    enteredText += softMap.getCurrentContent();
   }
   
   // Move along the map in a direction.
   void move(Direction direction) {
-    
+    softMap.crawl(direction);
+  }
+  
+  String getEnteredText() {
+    return this.enteredText;
   }
 }
 
