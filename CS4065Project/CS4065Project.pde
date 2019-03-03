@@ -14,11 +14,6 @@ final color highlight = #F1F1F1;
 final color background = #DDCCA1;
 PFont presentedTextFont, enteredTextFont, buttonFont;
 
-ControlIO control;
-ControlDevice device;
-ControlButton selectionButton;
-ControlHat joystick;
-
 KeyboardModule kbModule;
 InputMethod inMethod;
 
@@ -44,11 +39,12 @@ void setup() {
     ConfigReader cr = new ConfigReader(configFile);
     Tree<Direction> tc = cr.buildH4Tree();
     
-    // Create keyboard module, attach the tree, and register and input method.
+    // Create keyboard module, attach the tree, and register an input method.
     kbModule = new H4Keyboard(tc);
     inMethod = new WASD(this, kbModule);
   } catch (IOException ioe) {
     JOptionPane.showMessageDialog(null, "Config format incorrect: " + ioe.getMessage());
+    exit();
   }
 }
 
