@@ -1,5 +1,3 @@
-import java.io.*;
-
 /**
  * Class ConfigReader
  *
@@ -22,7 +20,6 @@ class ConfigReader {
     // Run through every line in the file.
     String line;
     while ((line = configReader.readLine()) != null) {
-      line = configReader.readLine();
       
       // Config lines contain some content (e.g. p), a space, 
       // and a joystick path (e.g. UUD).

@@ -2,6 +2,8 @@ import net.java.games.input.*;
 import org.gamecontrolplus.*;
 import org.gamecontrolplus.gui.*;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.io.*;
 import javax.swing.JOptionPane;
 
@@ -13,11 +15,6 @@ final color black = #252525;
 final color highlight = #F1F1F1;
 final color background = #DDCCA1;
 PFont presentedTextFont, enteredTextFont, buttonFont;
-
-ControlIO control;
-ControlDevice device;
-ControlButton selectionButton;
-ControlHat joystick;
 
 KeyboardModule kbModule;
 InputMethod inMethod;
@@ -44,11 +41,12 @@ void setup() {
     ConfigReader cr = new ConfigReader(configFile);
     Tree<Direction> tc = cr.buildH4Tree();
     
-    // Create keyboard module, attach the tree, and register and input method.
+    // Create keyboard module, attach the tree, and register an input method.
     kbModule = new H4Keyboard(tc);
     inMethod = new WASD(this, kbModule);
   } catch (IOException ioe) {
     JOptionPane.showMessageDialog(null, "Config format incorrect: " + ioe.getMessage());
+    exit();
   }
 }
 
@@ -56,7 +54,7 @@ void draw() {
   background(background);
   
   // Draw parts of the UI that both keyboards share.
-  drawCommonUI("Lorem ipsum dolor sit.", "Lorem ipsum");
+  drawCommonUI("Lorem ipsum dolor sit.", kbModule.getEnteredText());
   
   kbModule.render();
 }

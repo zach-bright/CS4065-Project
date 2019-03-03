@@ -5,34 +5,50 @@
  * chilren TreeNodes.
  */
 class TreeNode<T> {
-  ArrayList<TreeNode<T>> children;
+  List<TreeNode<T>> children;
   TreeNode parent;
   String content;
   T label;
   
-  TreeNode(String content, T label, TreeNode parent) {
+  TreeNode(String content, T label, TreeNode<T> parent) {
     this.content = content;
     this.label = label;
     this.parent = parent;
     children = new ArrayList<TreeNode<T>>();
   }
   
-  void addChild(TreeNode child) {
-    children.add(child);
-  }
-  
-  ArrayList<TreeNode<T>> getChildren() {
-    return children;
-  }
-  
   // Search for child containing the label.
-  TreeNode getChildFromLabel(T label) {
+  TreeNode<T> getChildFromLabel(T label) {
     for (TreeNode n : children) {
       if (n.label.equals(label)) {
         return n;
       }
     }
     return null;
+  }
+  
+  // BFS down and get a list of contents.
+  void getContentList(List<String> contentList) {
+    // Add our own content.
+    if (this.content != null) {
+      contentList.add(this.content);
+    }
+    // Recurse through children.
+    for (TreeNode<T> t : children) {
+      t.getContentList(contentList);
+    }
+  }
+  
+  void addChild(TreeNode child) {
+    children.add(child);
+  }
+  
+  List<TreeNode<T>> getChildren() {
+    return children;
+  }
+  
+  boolean isLeaf() {
+    return this.children.isEmpty();
   }
 }
 
@@ -75,6 +91,29 @@ class Tree<T> {
     currentNode.addChild(newNode);
   }
   
+  // Kinda ugly method to search down one of the labels of the current node
+  // and return a space-joined list of the contents.
+  String getContentListFromLabel(T label) {
+    // Early exit if the child has no children with that label.
+    TreeNode<T> child = this.currentTreeNode.getChildFromLabel(label);
+    if (child == null) {
+      return "";
+    }
+    
+    // Get list of strings and compile into a single string.
+    List<String> list = new ArrayList<String>();
+    child.getContentList(list);
+    StringBuilder sb = new StringBuilder();
+    for (String s : list) {
+      sb.append(s);
+      sb.append(" ");
+    }
+    
+    // Have to delete last space we added.
+    sb.deleteCharAt(sb.length() - 1);
+    return sb.toString();
+  }
+  
   // Trace a series of labels and return the TreeNode it leads to.
   // If a step fails, return null.
   TreeNode tracePath(T[] labelPath) {
@@ -110,5 +149,9 @@ class Tree<T> {
   // Reset current TreeNode to the tree root.
   void rewind() {
     currentTreeNode = root;
+  }
+  
+  String getCurrentContent() {
+    return this.currentTreeNode.content;
   }
 }

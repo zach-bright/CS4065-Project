@@ -33,7 +33,7 @@ public class WASD extends InputMethod {
   // and pass it to the right method. WASD->ULDR->move(ULDR), ENTER->accept().
   public void keyEvent(KeyEvent event) {
     // Only accept key-release events.
-    if (event.getAction() != KeyEvent.RELEASE) { //<>//
+    if (event.getAction() != KeyEvent.RELEASE) {
       return;
     }
     
