@@ -1,4 +1,4 @@
-[space]  DD
+[space] DD
 e UU
 t RR
 a RD

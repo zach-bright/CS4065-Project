@@ -30,13 +30,43 @@ class H4Keyboard implements KeyboardModule {
   
   // Draw the H4 keyboard.
   void render() {
+    /*
+    // Draw polygons.
+    fill(highlight);
+    beginShape();  // Left
+    vertex(60, 160);
+    vertex(60, 550);
+    vertex(320, 420);
+    vertex(320, 290);
+    endShape(CLOSE);
+    beginShape();  // Up
+    vertex(60, 160);
+    vertex(840, 160);
+    vertex(580, 290);
+    vertex(320, 290);
+    endShape(CLOSE);
+    beginShape();  // Right
+    vertex(840, 160);
+    vertex(580, 290);
+    vertex(580, 420);
+    vertex(840, 550);
+    endShape(CLOSE);
+    beginShape();  // Down
+    vertex(60, 550);
+    vertex(840, 550);
+    vertex(580, 420);
+    vertex(320, 420);
+    endShape(CLOSE);
+    */
+    
+    // Draw text.
     fill(black);
     textFont(buttonFont);
     textAlign(CENTER, TOP);
-    text(upList, width/2, 200);
-    text(leftList, (width/2)-100, 250);
-    text(downList, width/2, 300);
-    text(rightList, (width/2)+200, 250);
+    text(upList, width/2, 225);
+    text(leftList, 255, 350);
+    text(downList, width/2, 485);
+    text(rightList, 645, 350);
   }
   
   // Accept the current selection and add to text.

@@ -92,7 +92,7 @@ class Tree<T> {
   }
   
   // Kinda ugly method to search down one of the labels of the current node
-  // and return a comma-joined list of the contents.
+  // and return a space-joined list of the contents.
   String getContentListFromLabel(T label) {
     // Early exit if the child has no children with that label.
     TreeNode<T> child = this.currentTreeNode.getChildFromLabel(label);
@@ -106,11 +106,11 @@ class Tree<T> {
     StringBuilder sb = new StringBuilder();
     for (String s : list) {
       sb.append(s);
-      sb.append(", ");
+      sb.append(" ");
     }
     
-    // Have to delete last comma we added.
-    sb.deleteCharAt(sb.length() - 2);
+    // Have to delete last space we added.
+    sb.deleteCharAt(sb.length() - 1);
     return sb.toString();
   }
   
