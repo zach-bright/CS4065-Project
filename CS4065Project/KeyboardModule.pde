@@ -33,8 +33,8 @@ class H4Keyboard implements KeyboardModule {
   
   // Accept the current selection and add to text.
   void accept() {
-    String content = h4Tree.getCurrentContent();
-    if (content != null) {
+    String content = h4Tree.getCurrentContent(); //<>//
+    if (content == null) {
       return;
     }
     
@@ -44,7 +44,12 @@ class H4Keyboard implements KeyboardModule {
   
   // Move along the tree in a direction.
   void move(Direction direction) {
-    h4Tree.crawlDown(direction);
+    h4Tree.crawlDown(direction); //<>//
+    
+    // If we moved to leaf, auto-accept.
+    if (h4Tree.currentTreeNode.isLeaf()) {
+      this.accept();
+    }
   }
   
   String getEnteredText() {

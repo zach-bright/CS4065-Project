@@ -17,14 +17,6 @@ class TreeNode<T> {
     children = new ArrayList<TreeNode<T>>();
   }
   
-  void addChild(TreeNode child) {
-    children.add(child);
-  }
-  
-  ArrayList<TreeNode<T>> getChildren() {
-    return children;
-  }
-  
   // Search for child containing the label.
   TreeNode getChildFromLabel(T label) {
     for (TreeNode n : children) {
@@ -33,6 +25,18 @@ class TreeNode<T> {
       }
     }
     return null;
+  }
+  
+  void addChild(TreeNode child) {
+    children.add(child);
+  }
+  
+  ArrayList<TreeNode<T>> getChildren() {
+    return children;
+  }
+  
+  boolean isLeaf() {
+    return this.children.isEmpty();
   }
 }
 

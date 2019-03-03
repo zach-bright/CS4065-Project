@@ -56,7 +56,7 @@ void draw() {
   background(background);
   
   // Draw parts of the UI that both keyboards share.
-  drawCommonUI("Lorem ipsum dolor sit.", "Lorem ipsum");
+  drawCommonUI("Lorem ipsum dolor sit.", kbModule.getEnteredText());
   
   kbModule.render();
 }

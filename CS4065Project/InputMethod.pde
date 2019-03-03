@@ -33,13 +33,13 @@ public class WASD extends InputMethod {
   // and pass it to the right method. WASD->ULDR->move(ULDR), ENTER->accept().
   public void keyEvent(KeyEvent event) {
     // Only accept key-release events.
-    if (event.getAction() != KeyEvent.RELEASE) { //<>//
+    if (event.getAction() != KeyEvent.RELEASE) {
       return;
     }
     
     // Convert the key from the event into a direction.
     // I really if-else chains but its easy, so w/e.
-    char k = event.getKey();
+    char k = event.getKey(); //<>//
     Direction direction;
     if (k == ENTER) {
       // Enter key accepts current selection.
