@@ -3,8 +3,9 @@ import org.gamecontrolplus.*;
 import org.gamecontrolplus.gui.*;
 
 import java.io.*;
+import javax.swing.JOptionPane;
 
-final String configPath = "config";
+final String configFolder = "config";
 final String configH4 = "H4-connections.txt";
 final String configSoft = "Soft-connections.txt";
 
@@ -39,17 +40,15 @@ void setup() {
   //       Basically, what we did in assignment 2.
   try {
     // Construct the H4 Tree.
-    configFile = new BufferedReader(new FileReader(configPath + File.separator + configH4));
+    configFile = createReader(configFolder + File.separator + configH4);
     ConfigReader cr = new ConfigReader(configFile);
     Tree<Direction> tc = cr.buildH4Tree();
     
     // Create keyboard module, attach the tree, and register and input method.
     kbModule = new H4Keyboard(tc);
     inMethod = new WASD(this, kbModule);
-  } catch (FileNotFoundException fnfe) {
-    // TODO: add error for missing config
   } catch (IOException ioe) {
-    // TODO: add error for failed tree build.
+    JOptionPane.showMessageDialog(null, "Config format incorrect: " + ioe.getMessage());
   }
 }
 

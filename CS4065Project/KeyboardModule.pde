@@ -1,3 +1,10 @@
+/**
+ * Interface KeyboardModule
+ *
+ * Interface for classes that represent non-physical keyboards. Rendering,
+ * movement between keys, etc. must be handled, but processing inputs should
+ * be left to InputMethod classes.
+ */
 interface KeyboardModule {
   abstract void render();
   abstract void accept();
@@ -33,6 +40,12 @@ class H4Keyboard implements KeyboardModule {
   }
 }
 
+/**
+ * Class SoftKeyboard
+ *
+ * A keyboard that lets users navigate around in a way similar to
+ * digital keyboards on video game consoles.
+ */
 class SoftKeyboard implements KeyboardModule {
   void render() {
     

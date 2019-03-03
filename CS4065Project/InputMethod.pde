@@ -1,4 +1,12 @@
-abstract class InputMethod {
+/**
+ * Class InputMethod
+ *
+ * InputMethod classes translate a subset of user input (e.g. some keys on
+ * the keyboard, a joystick + one key, etc.) into directions to be passed on
+ * to an attached keyboard module. To do this, classes should attach custom 
+ * input handlers through the use of PApplet.
+ */
+public abstract class InputMethod {
   PApplet applet;
   KeyboardModule kbModule;
   
@@ -15,7 +23,7 @@ abstract class InputMethod {
  * Classic WASD controls, mostly for testing. Converts to ULDR and sends
  * to kbModule.
  */
-class WASD extends InputMethod {
+public class WASD extends InputMethod {
   WASD(PApplet applet, KeyboardModule kbModule) {
     super(applet, kbModule);
     applet.registerMethod("keyEvent", this);
@@ -23,9 +31,9 @@ class WASD extends InputMethod {
   
   // Convert a released-key event into a form that kbModule understands,
   // and pass it to the right method. WASD->ULDR->move(ULDR), ENTER->accept().
-  void keyEvent(KeyEvent event) {
+  public void keyEvent(KeyEvent event) {
     // Only accept key-release events.
-    if (event.getAction() != KeyEvent.RELEASE) {
+    if (event.getAction() != KeyEvent.RELEASE) { //<>//
       return;
     }
     
@@ -48,6 +56,7 @@ class WASD extends InputMethod {
     } else {
       return;
     }
+    
     // If key was W,A,S,D, then move.
     kbModule.move(direction);
   }
@@ -59,8 +68,8 @@ class WASD extends InputMethod {
  * Handles polling the joystick every frame, turning this into 
  * U, D, L, or R. Also handle polling accept button (on controller).
  */
-class Joystick extends InputMethod {
-  final float deadzoneRadius = 0.7;
+public class Joystick extends InputMethod {
+  private final float deadzoneRadius = 0.7;
   
   ControlIO control;
   ControlDevice device;
