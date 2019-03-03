@@ -3,8 +3,9 @@ import org.gamecontrolplus.*;
 import org.gamecontrolplus.gui.*;
 
 import java.io.*;
+import javax.swing.JOptionPane;
 
-final String configPath = "config";
+final String configFolder = "config";
 final String configH4 = "H4-connections.txt";
 final String configSoft = "Soft-connections.txt";
 
@@ -18,12 +19,15 @@ ControlDevice device;
 ControlButton selectionButton;
 ControlHat joystick;
 
+KeyboardModule kbModule;
+InputMethod inMethod;
+
 BufferedReader configFile;
 
 void setup() {
   // Initialize interface stuff.
   size(900, 600);
-  frame.setTitle("Experiment");
+  surface.setTitle("Experiment");
   frameRate(60);
   
   // Load fonts.
@@ -31,23 +35,21 @@ void setup() {
   enteredTextFont = loadFont("Georgia-26.vlw");
   buttonFont = loadFont("Arial-BoldMT-16.vlw");
 
-  /*
-  // Load controller.
-  control = ControlIO.getInstance(this);
-  device = control.getDevice("");         // TODO: figure out the controller we're using
-  selectionButton = device.getButton(""); // TODO: find name of button we're using
-  joystick = device.getHat("");           // TODO: also find joystick's name
-  
+  // TODO: Move all of this into a method that asks the user about picking 
+  //       various "conditions", which decide input method + kb module. 
+  //       Basically, what we did in assignment 2.
   try {
-    configFile = new BufferedReader(new FileReader(configPath + File.separator + configH4));
+    // Construct the H4 Tree.
+    configFile = createReader(configFolder + File.separator + configH4);
     ConfigReader cr = new ConfigReader(configFile);
-    Tree tc = cr.buildH4Tree();
-  } catch (FileNotFoundException fnfe) {
-    // TODO: add error for missing config
+    Tree<Direction> tc = cr.buildH4Tree();
+    
+    // Create keyboard module, attach the tree, and register and input method.
+    kbModule = new H4Keyboard(tc);
+    inMethod = new WASD(this, kbModule);
   } catch (IOException ioe) {
-    // TODO: add error for failed tree build.
+    JOptionPane.showMessageDialog(null, "Config format incorrect: " + ioe.getMessage());
   }
-  */
 }
 
 void draw() {
@@ -55,16 +57,19 @@ void draw() {
   
   // Draw parts of the UI that both keyboards share.
   drawCommonUI("Lorem ipsum dolor sit.", "Lorem ipsum");
+  
+  kbModule.render();
 }
 
+// Draws UI elements common between keyboards.
 void drawCommonUI(String presentedText, String enteredText) {
-  // Draw the presented text.
+  // Draw the presented text (text to be written).
   fill(black);
   textFont(presentedTextFont);
   textAlign(CENTER, TOP);
   text(presentedText, width/2, 46);
   
-  // Draw entered text on a rectangular background.
+  // Draw entered text (what user wrote) on a rectangular bkg.
   fill(highlight);
   rect(60, 110, 780, 40);
   fill(black);
@@ -72,7 +77,7 @@ void drawCommonUI(String presentedText, String enteredText) {
   textAlign(LEFT, TOP);
   text(enteredText, 70, 120);
   
-  // Draw rectangle for the keyboard.
+  // Draw rectangle that the keyboard will be drawn over.
   fill(highlight);
   rect(60, 160, 780, 390);
 }
