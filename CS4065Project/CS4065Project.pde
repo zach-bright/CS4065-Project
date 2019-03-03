@@ -2,6 +2,8 @@ import net.java.games.input.*;
 import org.gamecontrolplus.*;
 import org.gamecontrolplus.gui.*;
 
+import java.util.List;
+import java.util.ArrayList;
 import java.io.*;
 import javax.swing.JOptionPane;
 

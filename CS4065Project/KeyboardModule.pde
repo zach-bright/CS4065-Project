@@ -21,19 +21,27 @@ interface KeyboardModule {
 class H4Keyboard implements KeyboardModule {
   Tree<Direction> h4Tree;
   String enteredText = "";
+  String upList, leftList, downList, rightList;
   
   H4Keyboard(Tree<Direction> h4Tree) {
     this.h4Tree = h4Tree;
+    this.updateListStrings();
   }
   
   // Draw the H4 keyboard.
   void render() {
-    
+    fill(black);
+    textFont(buttonFont);
+    textAlign(CENTER, TOP);
+    text(upList, width/2, 200);
+    text(leftList, (width/2)-100, 250);
+    text(downList, width/2, 300);
+    text(rightList, (width/2)+200, 250);
   }
   
   // Accept the current selection and add to text.
   void accept() {
-    String content = h4Tree.getCurrentContent(); //<>//
+    String content = h4Tree.getCurrentContent();
     if (content == null) {
       return;
     }
@@ -44,12 +52,25 @@ class H4Keyboard implements KeyboardModule {
   
   // Move along the tree in a direction.
   void move(Direction direction) {
-    h4Tree.crawlDown(direction); //<>//
+    h4Tree.crawlDown(direction);
     
     // If we moved to leaf, auto-accept.
     if (h4Tree.currentTreeNode.isLeaf()) {
       this.accept();
     }
+    
+    // Now that we moved, update [ULDR]List strings.
+    this.updateListStrings();
+  }
+  
+  // Update the four strings used to show users what options are
+  // available to select for each of the four directions.
+  private void updateListStrings() {
+    // BFS down the tree in each direction.
+    upList = h4Tree.getContentListFromLabel(Direction.UP);
+    leftList = h4Tree.getContentListFromLabel(Direction.LEFT);
+    downList = h4Tree.getContentListFromLabel(Direction.DOWN);
+    rightList = h4Tree.getContentListFromLabel(Direction.RIGHT);
   }
   
   String getEnteredText() {

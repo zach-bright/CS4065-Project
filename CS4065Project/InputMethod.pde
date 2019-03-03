@@ -39,7 +39,7 @@ public class WASD extends InputMethod {
     
     // Convert the key from the event into a direction.
     // I really if-else chains but its easy, so w/e.
-    char k = event.getKey(); //<>//
+    char k = event.getKey();
     Direction direction;
     if (k == ENTER) {
       // Enter key accepts current selection.

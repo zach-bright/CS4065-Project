@@ -5,7 +5,7 @@
  * MapNodes bidirectionally.
  */
 class MapNode<T> {
-  ArrayList<MapNode> connectedNodes;
+  List<MapNode> connectedNodes;
   String content;
   T label;
   
@@ -19,7 +19,7 @@ class MapNode<T> {
     connectedNodes.add(node);
   }
   
-  ArrayList<MapNode> getConnections() {
+  List<MapNode> getConnections() {
     return connectedNodes;
   }
   
@@ -41,10 +41,10 @@ class MapNode<T> {
  * a current node + methods to move to surrounding nodes.
  */
 class Map<T> {
-  ArrayList<MapNode<T>> nodes;
+  List<MapNode<T>> nodes;
   MapNode currentNode;
   
-  Map(ArrayList<MapNode<T>> nodes, int startingIndex) {
+  Map(List<MapNode<T>> nodes, int startingIndex) {
     this.nodes = nodes;
     currentNode = nodes.get(startingIndex);
   }
