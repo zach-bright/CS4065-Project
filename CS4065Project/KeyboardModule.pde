@@ -22,6 +22,7 @@ class H4Keyboard implements KeyboardModule {
   Tree<Direction> h4Tree;
   String enteredText = "";
   String upList, leftList, downList, rightList;
+  String currentPath=  "";
   
   H4Keyboard(Tree<Direction> h4Tree) {
     this.h4Tree = h4Tree;
@@ -30,7 +31,6 @@ class H4Keyboard implements KeyboardModule {
   
   // Draw the H4 keyboard.
   void render() {
-    /*
     // Draw polygons.
     fill(highlight);
     beginShape();  // Left
@@ -57,16 +57,18 @@ class H4Keyboard implements KeyboardModule {
     vertex(580, 420);
     vertex(320, 420);
     endShape(CLOSE);
-    */
     
     // Draw text.
     fill(black);
     textFont(buttonFont);
-    textAlign(CENTER, TOP);
-    text(upList, width/2, 225);
-    text(leftList, 255, 350);
-    text(downList, width/2, 485);
-    text(rightList, 645, 350);
+    textAlign(CENTER, CENTER);
+    rectMode(CENTER);
+    text(upList, width/2, 225, 100, 100);
+    text(leftList, 200, 350, 100, 100);
+    text(downList, width/2, 485, 100, 100);
+    text(rightList, 700, 350, 100, 100);
+    text(currentPath, width/2, 355, 100, 100);
+    rectMode(CORNER);
   }
   
   // Accept the current selection and add to text.
@@ -77,19 +79,21 @@ class H4Keyboard implements KeyboardModule {
     }
     
     enteredText += content;
+    currentPath = "";
     h4Tree.rewind();
   }
   
   // Move along the tree in a direction.
   void move(Direction direction) {
     h4Tree.crawlDown(direction);
+    currentPath += " " + direction;
     
     // If we moved to leaf, auto-accept.
     if (h4Tree.currentTreeNode.isLeaf()) {
       this.accept();
     }
     
-    // Now that we moved, update [ULDR]List strings.
+    // Now that we moved, update [ULDR]List strings and current path.
     this.updateListStrings();
   }
   
@@ -169,7 +173,7 @@ public enum Direction {
   }
   
   // Applying above to an array. This could be done easily in ConfigReader
-  // using Java 8 functional programming but its not supported in Processing :(
+  // using Java 8 but its not supported in Processing :(
   public static Direction[] stringToDirection(String[] strs) {
     Direction[] directions = new Direction[strs.length];
     for (int i = 0; i < strs.length; i++) {
