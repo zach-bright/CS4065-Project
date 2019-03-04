@@ -18,6 +18,7 @@ PFont presentedTextFont, enteredTextFont, buttonFont;
 
 KeyboardModule kbModule;
 InputMethod inMethod;
+int kbCondition, inCondition;
 
 BufferedReader configFile;
 
@@ -31,19 +32,11 @@ void setup() {
   presentedTextFont = loadFont("Georgia-Bold-32.vlw");
   enteredTextFont = loadFont("Georgia-26.vlw");
   buttonFont = loadFont("Arial-BoldMT-16.vlw");
-
-  // TODO: Move all of this into a method that asks the user about picking 
-  //       various "conditions", which decide input method + kb module. 
-  //       Basically, what we did in assignment 2.
+  
+  // Ask user for the two conditions.
   try {
-    // Construct the H4 Tree.
-    configFile = createReader(configFolder + File.separator + configH4);
-    ConfigReader cr = new ConfigReader(configFile);
-    Tree<Direction> tc = cr.buildH4Tree();
-    
-    // Create keyboard module, attach the tree, and register an input method.
-    kbModule = new H4Keyboard(tc);
-    inMethod = new WASD(this, kbModule);
+    kbModule = buildKeyboardModule();
+    inMethod = buildInputMethod();
   } catch (IOException ioe) {
     JOptionPane.showMessageDialog(null, "Config format incorrect: " + ioe.getMessage());
     exit();
@@ -59,7 +52,57 @@ void draw() {
   kbModule.render();
 }
 
-// Draws UI elements common between keyboards.
+/**
+ * Ask what keyboard to use, then builds and returns corresponding KB module.
+ */
+KeyboardModule buildKeyboardModule() throws IOException {
+  // Get condition value.
+  kbCondition = JOptionPane.showOptionDialog(frame, 
+    "Please choose 1st condition.", "Condition", 
+    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, 
+    null, new String[] {"Condition A", "Condition B"}, 0
+  );
+  
+  KeyboardModule chosenKB;
+  if (kbCondition == 0) {
+    // Condition 0 is for the H4-Writer keyboard.
+    configFile = createReader(configFolder + File.separator + configH4);
+    ConfigReader cr = new ConfigReader(configFile);
+    Tree<Direction> tc = cr.buildH4Tree();
+    chosenKB = new H4Keyboard(tc);
+  } else {
+    // Condition 1 is for the Soft keyboard.
+    // TODO: Write condition 1 initializer.
+    chosenKB = null;
+  }
+  return chosenKB;
+}
+
+/**
+ * Ask what method to use, then builds and returns corresponding input method.
+ */
+InputMethod buildInputMethod() throws IOException {
+  // Get condition value.
+  inCondition = JOptionPane.showOptionDialog(frame, 
+    "Please choose 2nd condition.", "Condition", 
+    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, 
+    null, new String[] {"Condition A", "Condition B"}, 0
+  );
+  
+  InputMethod chosenIn;
+  if (inCondition == 0) {
+    // Condition 0 is for WASD input.
+    chosenIn = new WASD(this, kbModule);
+  } else {
+    // Condition 1 is for Joystick input.
+    chosenIn = new Joystick(this, kbModule);
+  }
+  return chosenIn;
+}
+
+/**
+ * Draw UI elements common between keyboard modules.
+ */
 void drawCommonUI(String presentedText, String enteredText) {
   // Draw the presented text (text to be written).
   fill(black);
