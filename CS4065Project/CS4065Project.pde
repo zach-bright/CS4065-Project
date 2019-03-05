@@ -1,11 +1,10 @@
+import org.gamecontrolplus.gui.*;
 import net.java.games.input.*;
 import org.gamecontrolplus.*;
-import org.gamecontrolplus.gui.*;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.io.*;
 import javax.swing.JOptionPane;
+import java.util.*;
+import java.io.*;
 
 final String configFolder = "config";
 final String configH4 = "H4-connections.txt";
@@ -19,8 +18,6 @@ PFont presentedTextFont, enteredTextFont, buttonFont;
 KeyboardModule kbModule;
 InputMethod inMethod;
 int kbCondition, inCondition;
-
-BufferedReader configFile;
 
 void setup() {
   // Initialize interface stuff.
@@ -66,14 +63,14 @@ KeyboardModule buildKeyboardModule() throws IOException {
   KeyboardModule chosenKB;
   if (kbCondition == 0) {
     // Condition 0 is for the H4-Writer keyboard.
-    configFile = createReader(configFolder + File.separator + configH4);
+    BufferedReader configFile = createReader(configFolder + File.separator + configH4);
     ConfigReader cr = new ConfigReader(configFile);
     Tree<Direction> tc = cr.buildH4Tree();
     chosenKB = new H4Keyboard(tc);
   } else {
     // Condition 1 is for the Soft keyboard.
     // TODO: Write condition 1 initializer.
-    chosenKB = null;
+    throw new IOException("Condition not implemented.");
   }
   return chosenKB;
 }

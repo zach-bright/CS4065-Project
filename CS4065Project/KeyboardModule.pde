@@ -1,15 +1,43 @@
 /**
- * Interface KeyboardModule
+ * Class KeyboardModule
  *
- * Interface for classes that represent non-physical keyboards. Rendering,
- * movement between keys, etc. must be handled, but processing inputs should
- * be left to InputMethod classes.
+ * For classes that represent non-physical keyboards. Rendering, movement
+ * between keys, etc. must be handled, but processing inputs should be
+ * left to InputMethod classes.
  */
-interface KeyboardModule {
+abstract class KeyboardModule {
+  String upList, leftList, downList, rightList;
+  String enteredText = "";
+  String currentPath = "";
+  boolean shift = false, caps = false;
+  
   abstract void render();
   abstract void accept();
   abstract void move(Direction direction);
   abstract String getEnteredText();
+  
+  // Deals with everything special-character related.
+  void handleSpecialChar(String charString) {
+    switch (charString.trim()) {
+      case "[bksp]":
+        // Trim last char from text.
+        if (enteredText.length() > 0) {
+          enteredText = enteredText.substring(0, enteredText.length() - 1);
+        }
+        break;
+      case "[enter]":
+        // TODO: Logic to record current entered text and show next test.
+        break;
+      case "[shift]":
+        shift = true;
+        break;
+      case "[caps]":
+        caps = !caps;
+        break;
+      case "[sym]":
+        // TODO: No clue what this one does.
+    }
+  }
 }
 
 /**
@@ -18,11 +46,8 @@ interface KeyboardModule {
  * Handles everything about the H4-Writer keyboard implementation.
  * Rendering, handling the H4 tree structure, etc.
  */
-class H4Keyboard implements KeyboardModule {
+class H4Keyboard extends KeyboardModule {
   Tree<Direction> h4Tree;
-  String enteredText = "";
-  String upList, leftList, downList, rightList;
-  String currentPath=  "";
   
   H4Keyboard(Tree<Direction> h4Tree) {
     this.h4Tree = h4Tree;
@@ -31,6 +56,8 @@ class H4Keyboard implements KeyboardModule {
   
   // Draw the H4 keyboard.
   void render() {
+    // TODO: Move this garbage into a special trapezoid class or
+    //       something. God, I hate graphics programming.
     // Draw polygons.
     fill(highlight);
     beginShape();  // Left
@@ -78,7 +105,21 @@ class H4Keyboard implements KeyboardModule {
       return;
     }
     
-    enteredText += content;
+    // Check if content is a special character.
+    if (content.matches("(\\[.*\\])")) {
+      this.handleSpecialChar(content);
+    } else {
+      // Just like on normal keyboards, capitalize if shift or caps
+      // is on, but not if both are on.
+      if (this.shift ^ this.caps) { //<>//
+        enteredText += content.toUpperCase();
+      } else {
+        enteredText += content;
+      }
+      // Turn off shift if we added alphanumeric.
+      shift = false;
+    }
+    
     currentPath = "";
     h4Tree.rewind();
   }
@@ -118,9 +159,8 @@ class H4Keyboard implements KeyboardModule {
  * A keyboard that lets users navigate around in a way similar to
  * digital keyboards on video game consoles.
  */
-class SoftKeyboard implements KeyboardModule {
+class SoftKeyboard extends KeyboardModule {
   Map<Direction> softMap;
-  String enteredText = "";
   
   SoftKeyboard(Map<Direction> softMap) {
     this.softMap = softMap;
