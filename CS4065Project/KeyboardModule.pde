@@ -29,6 +29,10 @@ abstract class KeyboardModule {
           enteredText = enteredText.substring(0, enteredText.length() - 1);
         }
         break;
+      case "[space]":
+        // Add space to text.
+        enteredText += " ";
+        break;
       case "[enter]":
         // [enter] means the user wants to submit the current enteredText as 
         // the answer. So, get pHandler to record test and start new one.
@@ -127,7 +131,7 @@ class H4Keyboard extends KeyboardModule {
     } else {
       // Just like on normal keyboards, capitalize if shift or caps
       // is on, but not if both are on.
-      if (this.shift ^ this.caps) { //<>//
+      if (this.shift ^ this.caps) {
         enteredText += content.toUpperCase();
       } else {
         enteredText += content;

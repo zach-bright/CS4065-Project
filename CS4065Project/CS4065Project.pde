@@ -41,7 +41,7 @@ void setup() {
     userId = getUserId();
     String timestamp = day() + "-" + month() + "-" + year();
     String outputFileName = "User-" + userId + "_" + timestamp + ".txt";
-    String[] phraseList = loadStrings(configFolder + File.separator + configPhrases); //<>//
+    String[] phraseList = loadStrings(configFolder + File.separator + configPhrases);
     tHandler = new TestHandler(phraseList, outputFileName);
     
     // Ask user for the two conditions.
@@ -63,7 +63,7 @@ void draw() {
   kbModule.render();
   
   if (isFinished) {
-    // If all tests are done, show dialog to user and exit.
+    // If all tests are done, notify user and exit.
     showExitDialog();
     exit();
     return;
