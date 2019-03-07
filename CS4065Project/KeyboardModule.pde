@@ -1,15 +1,62 @@
 /**
- * Interface KeyboardModule
+ * Class KeyboardModule
  *
- * Interface for classes that represent non-physical keyboards. Rendering,
- * movement between keys, etc. must be handled, but processing inputs should
- * be left to InputMethod classes.
+ * For classes that represent non-physical keyboards. Rendering, movement
+ * between keys, etc. must be handled, but processing inputs should be
+ * left to InputMethod classes.
  */
-interface KeyboardModule {
+abstract class KeyboardModule {
+  TestHandler tHandler;
+  String upList, leftList, downList, rightList;
+  String enteredText = "";
+  String currentPath = "";
+  boolean shift = false, caps = false;
+  
   abstract void render();
   abstract void accept();
   abstract void move(Direction direction);
-  abstract String getEnteredText();
+  
+  KeyboardModule(TestHandler pHandler) {
+    this.tHandler = pHandler;
+  }
+  
+  // Deals with everything special-character related.
+  void handleSpecialChar(String charString) {
+    switch (charString.trim()) {
+      case "[bksp]":
+        // Trim last char from text.
+        if (enteredText.length() > 0) {
+          enteredText = enteredText.substring(0, enteredText.length() - 1);
+        }
+        break;
+      case "[space]":
+        // Add space to text.
+        enteredText += " ";
+        break;
+      case "[enter]":
+        // [enter] means the user wants to submit the current enteredText as 
+        // the answer. So, get pHandler to record test and start new one.
+        tHandler.recordTest(enteredText);
+        tHandler.nextTest();
+        // Teardown to prepare for next test.
+        enteredText = "";
+        shift = false;
+        caps = false;
+        break;
+      case "[shift]":
+        shift = true;
+        break;
+      case "[caps]":
+        caps = !caps;
+        break;
+      case "[sym]":
+        // TODO: No clue what this one does.
+    }
+  }
+  
+  String getEnteredText() {
+    return this.enteredText;
+  }
 }
 
 /**
@@ -18,19 +65,19 @@ interface KeyboardModule {
  * Handles everything about the H4-Writer keyboard implementation.
  * Rendering, handling the H4 tree structure, etc.
  */
-class H4Keyboard implements KeyboardModule {
+class H4Keyboard extends KeyboardModule {
   Tree<Direction> h4Tree;
-  String enteredText = "";
-  String upList, leftList, downList, rightList;
   
-  H4Keyboard(Tree<Direction> h4Tree) {
+  H4Keyboard(Tree<Direction> h4Tree, TestHandler tHandler) {
+    super(tHandler);
     this.h4Tree = h4Tree;
     this.updateListStrings();
   }
   
   // Draw the H4 keyboard.
   void render() {
-    /*
+    // TODO: Move this garbage into a special trapezoid class or
+    //       something. God, I hate graphics programming.
     // Draw polygons.
     fill(highlight);
     beginShape();  // Left
@@ -57,16 +104,18 @@ class H4Keyboard implements KeyboardModule {
     vertex(580, 420);
     vertex(320, 420);
     endShape(CLOSE);
-    */
     
     // Draw text.
     fill(black);
     textFont(buttonFont);
-    textAlign(CENTER, TOP);
-    text(upList, width/2, 225);
-    text(leftList, 255, 350);
-    text(downList, width/2, 485);
-    text(rightList, 645, 350);
+    textAlign(CENTER, CENTER);
+    rectMode(CENTER);
+    text(upList, width/2, 225, 100, 100);
+    text(leftList, 200, 350, 100, 100);
+    text(downList, width/2, 485, 100, 100);
+    text(rightList, 700, 350, 100, 100);
+    text(currentPath, width/2, 355, 100, 100);
+    rectMode(CORNER);
   }
   
   // Accept the current selection and add to text.
@@ -76,20 +125,36 @@ class H4Keyboard implements KeyboardModule {
       return;
     }
     
-    enteredText += content;
+    // Check if content is a special character.
+    if (content.matches("(\\[.*\\])")) {
+      this.handleSpecialChar(content);
+    } else {
+      // Just like on normal keyboards, capitalize if shift or caps
+      // is on, but not if both are on.
+      if (this.shift ^ this.caps) {
+        enteredText += content.toUpperCase();
+      } else {
+        enteredText += content;
+      }
+      // Turn off shift if we added alphanumeric.
+      shift = false;
+    }
+    
+    currentPath = "";
     h4Tree.rewind();
   }
   
   // Move along the tree in a direction.
   void move(Direction direction) {
     h4Tree.crawlDown(direction);
+    currentPath += " " + direction;
     
     // If we moved to leaf, auto-accept.
     if (h4Tree.currentTreeNode.isLeaf()) {
       this.accept();
     }
     
-    // Now that we moved, update [ULDR]List strings.
+    // Now that we moved, update [ULDR]List strings and current path.
     this.updateListStrings();
   }
   
@@ -102,10 +167,6 @@ class H4Keyboard implements KeyboardModule {
     downList = h4Tree.getContentListFromLabel(Direction.DOWN);
     rightList = h4Tree.getContentListFromLabel(Direction.RIGHT);
   }
-  
-  String getEnteredText() {
-    return this.enteredText;
-  }
 }
 
 /**
@@ -114,11 +175,11 @@ class H4Keyboard implements KeyboardModule {
  * A keyboard that lets users navigate around in a way similar to
  * digital keyboards on video game consoles.
  */
-class SoftKeyboard implements KeyboardModule {
+class SoftKeyboard extends KeyboardModule {
   Map<Direction> softMap;
-  String enteredText = "";
   
-  SoftKeyboard(Map<Direction> softMap) {
+  SoftKeyboard(Map<Direction> softMap, TestHandler tHandler) {
+    super(tHandler);
     this.softMap = softMap;
   }
   
@@ -135,10 +196,6 @@ class SoftKeyboard implements KeyboardModule {
   // Move along the map in a direction.
   void move(Direction direction) {
     softMap.crawl(direction);
-  }
-  
-  String getEnteredText() {
-    return this.enteredText;
   }
 }
 
@@ -169,7 +226,7 @@ public enum Direction {
   }
   
   // Applying above to an array. This could be done easily in ConfigReader
-  // using Java 8 functional programming but its not supported in Processing :(
+  // using Java 8 but its not supported in Processing :(
   public static Direction[] stringToDirection(String[] strs) {
     Direction[] directions = new Direction[strs.length];
     for (int i = 0; i < strs.length; i++) {

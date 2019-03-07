@@ -20,7 +20,6 @@ class ConfigReader {
     // Run through every line in the file.
     String line;
     while ((line = configReader.readLine()) != null) {
-      
       // Config lines contain some content (e.g. p), a space, 
       // and a joystick path (e.g. UUD).
       String[] splitLine = line.trim().split(" ");

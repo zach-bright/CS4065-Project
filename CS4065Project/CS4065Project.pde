@@ -1,15 +1,16 @@
+import org.gamecontrolplus.gui.*;
 import net.java.games.input.*;
 import org.gamecontrolplus.*;
-import org.gamecontrolplus.gui.*;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.io.*;
 import javax.swing.JOptionPane;
+import java.util.*;
+import java.io.*;
 
 final String configFolder = "config";
-final String configH4 = "H4-connections.txt";
-final String configSoft = "Soft-connections.txt";
+final String configH4 = "h4-connections.txt";
+final String configSoft = "soft-connections.txt";
+final String configPhrases = "phrases.txt";
+final String outputFile = "records.txt";
 
 final color black = #252525;
 final color highlight = #F1F1F1;
@@ -18,8 +19,11 @@ PFont presentedTextFont, enteredTextFont, buttonFont;
 
 KeyboardModule kbModule;
 InputMethod inMethod;
+TestHandler tHandler;
+String userId;
+int kbCondition, inCondition;
 
-BufferedReader configFile;
+boolean isFinished = false;
 
 void setup() {
   // Initialize interface stuff.
@@ -31,19 +35,18 @@ void setup() {
   presentedTextFont = loadFont("Georgia-Bold-32.vlw");
   enteredTextFont = loadFont("Georgia-26.vlw");
   buttonFont = loadFont("Arial-BoldMT-16.vlw");
-
-  // TODO: Move all of this into a method that asks the user about picking 
-  //       various "conditions", which decide input method + kb module. 
-  //       Basically, what we did in assignment 2.
+  
   try {
-    // Construct the H4 Tree.
-    configFile = createReader(configFolder + File.separator + configH4);
-    ConfigReader cr = new ConfigReader(configFile);
-    Tree<Direction> tc = cr.buildH4Tree();
+    // Get user ID, use it to make output filename, build test handler obj.
+    userId = getUserId();
+    String timestamp = day() + "-" + month() + "-" + year();
+    String outputFileName = "User-" + userId + "_" + timestamp + ".txt";
+    String[] phraseList = loadStrings(configFolder + File.separator + configPhrases);
+    tHandler = new TestHandler(phraseList, outputFileName);
     
-    // Create keyboard module, attach the tree, and register an input method.
-    kbModule = new H4Keyboard(tc);
-    inMethod = new WASD(this, kbModule);
+    // Ask user for the two conditions.
+    kbModule = buildKeyboardModule();
+    inMethod = buildInputMethod();
   } catch (IOException ioe) {
     JOptionPane.showMessageDialog(null, "Config format incorrect: " + ioe.getMessage());
     exit();
@@ -54,12 +57,79 @@ void draw() {
   background(background);
   
   // Draw parts of the UI that both keyboards share.
-  drawCommonUI("Lorem ipsum dolor sit.", kbModule.getEnteredText());
+  drawCommonUI(tHandler.getCurrentPhrase(), kbModule.getEnteredText());
   
+  // Render keyboard UI.
   kbModule.render();
+  
+  if (isFinished) {
+    // If all tests are done, notify user and exit.
+    showExitDialog();
+    exit();
+    return;
+  }
 }
 
-// Draws UI elements common between keyboards.
+/**
+ * Ask user for an ID to use to record their data.
+ */
+String getUserId() {
+  return JOptionPane.showInputDialog(frame, "Please enter user ID.", 
+    "User ID", JOptionPane.PLAIN_MESSAGE
+  );
+}
+
+/**
+ * Ask what keyboard to use, then builds and returns corresponding KB module.
+ */
+KeyboardModule buildKeyboardModule() throws IOException {
+  // Get condition value.
+  kbCondition = JOptionPane.showOptionDialog(frame, 
+    "Please choose 1st condition.", "Condition", 
+    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, 
+    null, new String[] {"Condition A", "Condition B"}, 0
+  );
+  
+  KeyboardModule chosenKB;
+  if (kbCondition == 0) {
+    // Condition 0 is for the H4-Writer keyboard.
+    BufferedReader configFile = createReader(configFolder + File.separator + configH4);
+    ConfigReader cr = new ConfigReader(configFile);
+    Tree<Direction> tc = cr.buildH4Tree();
+    chosenKB = new H4Keyboard(tc, tHandler);
+  } else {
+    // Condition 1 is for the Soft keyboard.
+    // TODO: Write condition 1 initializer.
+    throw new IOException("Condition not implemented.");
+  }
+  return chosenKB;
+}
+
+/**
+ * Ask what method to use, then builds and returns corresponding input method.
+ */
+InputMethod buildInputMethod() throws IOException {
+  // Get condition value.
+  inCondition = JOptionPane.showOptionDialog(frame, 
+    "Please choose 2nd condition.", "Condition", 
+    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, 
+    null, new String[] {"Condition A", "Condition B"}, 0
+  );
+  
+  InputMethod chosenIn;
+  if (inCondition == 0) {
+    // Condition 0 is for WASD input.
+    chosenIn = new WASD(this, kbModule);
+  } else {
+    // Condition 1 is for Joystick input.
+    chosenIn = new Joystick(this, kbModule);
+  }
+  return chosenIn;
+}
+
+/**
+ * Draw UI elements common between keyboard modules.
+ */
 void drawCommonUI(String presentedText, String enteredText) {
   // Draw the presented text (text to be written).
   fill(black);
@@ -78,4 +148,14 @@ void drawCommonUI(String presentedText, String enteredText) {
   // Draw rectangle that the keyboard will be drawn over.
   fill(highlight);
   rect(60, 160, 780, 390);
+}
+
+// Trigger exit dialog (and program exit) next frame.
+void triggerExit() {
+  isFinished = true;
+}
+
+// Show a little dialog telling the user the program is gonna exit. 
+void showExitDialog() {
+  JOptionPane.showMessageDialog(null, "All trials are complete, exiting now...");
 }
