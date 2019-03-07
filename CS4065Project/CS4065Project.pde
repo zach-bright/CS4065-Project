@@ -7,8 +7,10 @@ import java.util.*;
 import java.io.*;
 
 final String configFolder = "config";
-final String configH4 = "H4-connections.txt";
-final String configSoft = "Soft-connections.txt";
+final String configH4 = "h4-connections.txt";
+final String configSoft = "soft-connections.txt";
+final String configPhrases = "phrases.txt";
+final String outputFile = "records.txt";
 
 final color black = #252525;
 final color highlight = #F1F1F1;
@@ -17,7 +19,11 @@ PFont presentedTextFont, enteredTextFont, buttonFont;
 
 KeyboardModule kbModule;
 InputMethod inMethod;
+TestHandler tHandler;
+String userId;
 int kbCondition, inCondition;
+
+boolean isFinished = false;
 
 void setup() {
   // Initialize interface stuff.
@@ -30,8 +36,15 @@ void setup() {
   enteredTextFont = loadFont("Georgia-26.vlw");
   buttonFont = loadFont("Arial-BoldMT-16.vlw");
   
-  // Ask user for the two conditions.
   try {
+    // Get user ID, use it to make output filename, build test handler obj.
+    userId = getUserId();
+    String timestamp = day() + "-" + month() + "-" + year();
+    String outputFileName = "User-" + userId + "_" + timestamp + ".txt";
+    String[] phraseList = loadStrings(configFolder + File.separator + configPhrases); //<>//
+    tHandler = new TestHandler(phraseList, outputFileName);
+    
+    // Ask user for the two conditions.
     kbModule = buildKeyboardModule();
     inMethod = buildInputMethod();
   } catch (IOException ioe) {
@@ -44,9 +57,26 @@ void draw() {
   background(background);
   
   // Draw parts of the UI that both keyboards share.
-  drawCommonUI("Lorem ipsum dolor sit.", kbModule.getEnteredText());
+  drawCommonUI(tHandler.getCurrentPhrase(), kbModule.getEnteredText());
   
+  // Render keyboard UI.
   kbModule.render();
+  
+  if (isFinished) {
+    // If all tests are done, show dialog to user and exit.
+    showExitDialog();
+    exit();
+    return;
+  }
+}
+
+/**
+ * Ask user for an ID to use to record their data.
+ */
+String getUserId() {
+  return JOptionPane.showInputDialog(frame, "Please enter user ID.", 
+    "User ID", JOptionPane.PLAIN_MESSAGE
+  );
 }
 
 /**
@@ -66,7 +96,7 @@ KeyboardModule buildKeyboardModule() throws IOException {
     BufferedReader configFile = createReader(configFolder + File.separator + configH4);
     ConfigReader cr = new ConfigReader(configFile);
     Tree<Direction> tc = cr.buildH4Tree();
-    chosenKB = new H4Keyboard(tc);
+    chosenKB = new H4Keyboard(tc, tHandler);
   } else {
     // Condition 1 is for the Soft keyboard.
     // TODO: Write condition 1 initializer.
@@ -118,4 +148,14 @@ void drawCommonUI(String presentedText, String enteredText) {
   // Draw rectangle that the keyboard will be drawn over.
   fill(highlight);
   rect(60, 160, 780, 390);
+}
+
+// Trigger exit dialog (and program exit) next frame.
+void triggerExit() {
+  isFinished = true;
+}
+
+// Show a little dialog telling the user the program is gonna exit. 
+void showExitDialog() {
+  JOptionPane.showMessageDialog(null, "All trials are complete, exiting now...");
 }

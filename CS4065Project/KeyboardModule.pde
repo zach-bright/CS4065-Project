@@ -6,6 +6,7 @@
  * left to InputMethod classes.
  */
 abstract class KeyboardModule {
+  TestHandler tHandler;
   String upList, leftList, downList, rightList;
   String enteredText = "";
   String currentPath = "";
@@ -14,7 +15,10 @@ abstract class KeyboardModule {
   abstract void render();
   abstract void accept();
   abstract void move(Direction direction);
-  abstract String getEnteredText();
+  
+  KeyboardModule(TestHandler pHandler) {
+    this.tHandler = pHandler;
+  }
   
   // Deals with everything special-character related.
   void handleSpecialChar(String charString) {
@@ -26,7 +30,14 @@ abstract class KeyboardModule {
         }
         break;
       case "[enter]":
-        // TODO: Logic to record current entered text and show next test.
+        // [enter] means the user wants to submit the current enteredText as 
+        // the answer. So, get pHandler to record test and start new one.
+        tHandler.recordTest(enteredText);
+        tHandler.nextTest();
+        // Teardown to prepare for next test.
+        enteredText = "";
+        shift = false;
+        caps = false;
         break;
       case "[shift]":
         shift = true;
@@ -37,6 +48,10 @@ abstract class KeyboardModule {
       case "[sym]":
         // TODO: No clue what this one does.
     }
+  }
+  
+  String getEnteredText() {
+    return this.enteredText;
   }
 }
 
@@ -49,7 +64,8 @@ abstract class KeyboardModule {
 class H4Keyboard extends KeyboardModule {
   Tree<Direction> h4Tree;
   
-  H4Keyboard(Tree<Direction> h4Tree) {
+  H4Keyboard(Tree<Direction> h4Tree, TestHandler tHandler) {
+    super(tHandler);
     this.h4Tree = h4Tree;
     this.updateListStrings();
   }
@@ -147,10 +163,6 @@ class H4Keyboard extends KeyboardModule {
     downList = h4Tree.getContentListFromLabel(Direction.DOWN);
     rightList = h4Tree.getContentListFromLabel(Direction.RIGHT);
   }
-  
-  String getEnteredText() {
-    return this.enteredText;
-  }
 }
 
 /**
@@ -162,7 +174,8 @@ class H4Keyboard extends KeyboardModule {
 class SoftKeyboard extends KeyboardModule {
   Map<Direction> softMap;
   
-  SoftKeyboard(Map<Direction> softMap) {
+  SoftKeyboard(Map<Direction> softMap, TestHandler tHandler) {
+    super(tHandler);
     this.softMap = softMap;
   }
   
@@ -179,10 +192,6 @@ class SoftKeyboard extends KeyboardModule {
   // Move along the map in a direction.
   void move(Direction direction) {
     softMap.crawl(direction);
-  }
-  
-  String getEnteredText() {
-    return this.enteredText;
   }
 }
 
