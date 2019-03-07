@@ -9,22 +9,27 @@ class TestHandler {
   PrintWriter writer;
   String[] phrases;
   String currentPhrase;
-  int currentPhraseIndex;
+  int currentPhraseIndex, trialCount;
   
   int trialStartTime;
   
   TestHandler(String[] phrases, String outputFileName) {
     this.phrases = phrases;
     this.writer = createWriter(outputFileName);
-    currentPhraseIndex = 0;
-    currentPhrase = phrases[0];
+    this.currentPhraseIndex = 0;
+    this.currentPhrase = phrases[0];
+    // TODO: set this once we enable the trials (or something...)
+    this.trialCount = 1;
+    
+    // Write header line.
+    this.writer.println("Trial Number\tTime Elapsed\tLevenshtein Distance");
   }
   
   // Record a test as being completed.
   public void recordTest(String enteredText) {
     int trialTime = millis() - trialStartTime;
     int distance = this.levenshteinDistance(currentPhrase, enteredText);
-    writer.println(trialTime + "\t" + distance);
+    this.writer.println(trialCount + "\t" + trialTime + "\t" + distance);
   }
   
   // Advance to next phrase. If there are no more phrases, do
@@ -32,15 +37,17 @@ class TestHandler {
   // parent class (CS4065Project).
   public void nextTest() {
     if (currentPhraseIndex >= phrases.length - 1) {
-      writer.flush();
-      writer.close();
+      this.writer.flush();
+      this.writer.close();
       triggerExit();
       return;
     }
     
+    // Setup for next trial.
+    this.trialCount++;
+    this.currentPhraseIndex++;
+    this.currentPhrase = this.phrases[this.currentPhraseIndex];
     trialStartTime = millis();
-    currentPhraseIndex++;
-    currentPhrase = phrases[currentPhraseIndex];
   }
   
   // Calculate Levenshtein distance between phrases. This is the number
