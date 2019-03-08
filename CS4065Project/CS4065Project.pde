@@ -99,8 +99,10 @@ KeyboardModule buildKeyboardModule() throws IOException {
     chosenKB = new H4Keyboard(tc, tHandler);
   } else {
     // Condition 1 is for the Soft keyboard.
-    // TODO: Write condition 1 initializer.
-    throw new IOException("Condition not implemented.");
+    BufferedReader configFile = createReader(configFolder + File.separator + configSoft);
+    ConfigReader cr = new ConfigReader(configFile);
+    Graph<Direction> tc = cr.buildSoftGraph();
+    chosenKB = new SoftKeyboard(tc, tHandler);
   }
   return chosenKB;
 }

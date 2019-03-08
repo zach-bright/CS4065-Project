@@ -194,11 +194,11 @@ class H4Keyboard extends KeyboardModule {
  * digital keyboards on video game consoles.
  */
 class SoftKeyboard extends KeyboardModule {
-  Map<Direction> softMap;
+  Graph<Direction> softGraph;
   
-  SoftKeyboard(Map<Direction> softMap, TestHandler tHandler) {
+  SoftKeyboard(Graph<Direction> softGraph, TestHandler tHandler) {
     super(tHandler);
-    this.softMap = softMap;
+    this.softGraph = softGraph;
   }
   
   /**
@@ -212,14 +212,14 @@ class SoftKeyboard extends KeyboardModule {
    * Accept current selection and add to text.
    */
   void accept() {
-    enteredText += softMap.getCurrentContent();
+    enteredText += softGraph.getCurrentContent();
   }
   
   /**
-   * Move along the map in a direction.
+   * Move along the graph in a direction.
    */
   void move(Direction direction) {
-    softMap.crawl(direction);
+    softGraph.crawl(direction);
   }
 }
 
@@ -230,9 +230,9 @@ class SoftKeyboard extends KeyboardModule {
  */
 public enum Direction {
   UP,
+  RIGHT,
   DOWN,
-  LEFT,
-  RIGHT;
+  LEFT;
   
   /**
    * Used by the config-to-data structure stuff in ConfigReader
