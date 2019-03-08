@@ -22,7 +22,7 @@ class TestHandler {
     this.trialCount = 1;
     
     // Write header line.
-    this.writer.println("Trial Number\tTime Elapsed\tLevenshtein Distance");
+    this.writer.println("Trial #\tTime Elapsed (ms)\tWPM\tL Distance");
   }
   
   /**
@@ -31,7 +31,8 @@ class TestHandler {
   public void recordTest(String enteredText) {
     int trialTime = millis() - trialStartTime;
     int distance = this.levenshteinDistance(currentPhrase, enteredText);
-    this.writer.println(trialCount + "\t" + trialTime + "\t" + distance);
+    String wpmString = String.format("%.4f", this.wpm(enteredText, trialTime));
+    this.writer.println(trialCount + "\t" + trialTime + "\t" + wpmString + "\t" + distance);
   }
   
   /**
@@ -52,6 +53,21 @@ class TestHandler {
     this.currentPhraseIndex++;
     this.currentPhrase = this.phrases[this.currentPhraseIndex];
     trialStartTime = millis();
+  }
+  
+  /**
+   * Calculates words-per-minute.
+   */
+  private double wpm(String text, int time) {
+    // split() is stupid and returns a non-empty array on empty string, 
+    // so we need to check that before calculating wpm.
+    if ("".equals(text)) {
+      return 0.0;
+    }
+    
+    double wordCount = text.trim().split("\\s+").length; //<>//
+    double minutes = ((double)time / 1000) / 60;
+    return wordCount / minutes;
   }
   
   /**
