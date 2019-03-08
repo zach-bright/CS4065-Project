@@ -42,8 +42,7 @@ abstract class KeyboardModule {
         tHandler.nextTest();
         // Teardown to prepare for next test.
         enteredText = "";
-        shift = false;
-        caps = false;
+        shift = false;  
         break;
       case "[shift]":
         shift = true;
@@ -114,11 +113,20 @@ class H4Keyboard extends KeyboardModule {
     textFont(buttonFont);
     textAlign(CENTER, CENTER);
     rectMode(CENTER);
-    text(upList, width/2, 225, 100, 100);
-    text(leftList, 200, 350, 100, 100);
-    text(downList, width/2, 485, 100, 100);
-    text(rightList, 700, 350, 100, 100);
-    text(currentPath, width/2, 355, 100, 100);
+    // TODO: Clean this up as well.
+    if (this.shift ^ this.caps) {
+      text(upList.toUpperCase(), width/2, 225, 100, 100);
+      text(leftList.toUpperCase(), 200, 350, 100, 100);
+      text(downList.toUpperCase(), width/2, 485, 100, 100);
+      text(rightList.toUpperCase(), 700, 350, 100, 100);
+      text(currentPath.toUpperCase(), width/2, 355, 100, 100);
+    } else {
+      text(upList, width/2, 225, 100, 100);
+      text(leftList, 200, 350, 100, 100);
+      text(downList, width/2, 485, 100, 100);
+      text(rightList, 700, 350, 100, 100);
+      text(currentPath, width/2, 355, 100, 100);
+    }
     rectMode(CORNER);
   }
   
