@@ -25,16 +25,20 @@ class TestHandler {
     this.writer.println("Trial Number\tTime Elapsed\tLevenshtein Distance");
   }
   
-  // Record a test as being completed.
+  /**
+   * Record a test as being completed.
+   */
   public void recordTest(String enteredText) {
     int trialTime = millis() - trialStartTime;
     int distance = this.levenshteinDistance(currentPhrase, enteredText);
     this.writer.println(trialCount + "\t" + trialTime + "\t" + distance);
   }
   
-  // Advance to next phrase. If there are no more phrases, do
-  // teardown of writer (flush, close) and call teardown method in
-  // parent class (CS4065Project).
+  /**
+   * Advance to next phrase. If there are no more phrases, do
+   * teardown of writer (flush, close) and call teardown method in
+   * parent class (CS4065Project).
+   */
   public void nextTest() {
     if (currentPhraseIndex >= phrases.length - 1) {
       this.writer.flush();
@@ -50,9 +54,11 @@ class TestHandler {
     trialStartTime = millis();
   }
   
-  // Calculate Levenshtein distance between phrases. This is the number
-  // of deletions, insertions, or substitutions needed to turn phrase1
-  // into phrase2. This uses dynamic programming.
+  /**
+   * Calculate Levenshtein distance between phrases. This is the number
+   * of deletions, insertions, or substitutions needed to turn phrase1
+   * into phrase2. This uses dynamic programming.
+   */
   private int levenshteinDistance(String p1, String p2) {
     int p1Len = p1.length();
     int p2Len = p2.length();
@@ -100,7 +106,9 @@ class TestHandler {
     return dist[p1Len][p2Len];
   }
   
-  // Minimum of three integers.
+  /** 
+   * Minimum of three integers.
+   */
   private int tripleMin(int a, int b, int c) {
     int min = a;
     if (b < min) {

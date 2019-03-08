@@ -17,7 +17,9 @@ class TreeNode<T> {
     children = new ArrayList<TreeNode<T>>();
   }
   
-  // Search for child containing the label.
+  /**
+   * Search for child containing the label.
+   */
   TreeNode<T> getChildFromLabel(T label) {
     for (TreeNode n : children) {
       if (n.label.equals(label)) {
@@ -27,7 +29,9 @@ class TreeNode<T> {
     return null;
   }
   
-  // BFS down and get a list of contents.
+  /**
+   * BFS down and get a list of contents.
+   */
   void getContentList(List<String> contentList) {
     // Add our own content.
     if (this.content != null) {
@@ -67,8 +71,10 @@ class Tree<T> {
     this.currentTreeNode = root;
   }
   
-  // Follows a path down from root, creating nodes as necessary, and places  
-  // a new node containing the provided content at the last place.
+  /**
+   * Follows a path down from root, creating nodes as necessary, and places  
+   * a new node containing the provided content at the last place.
+   */
   void addNodeToPath(String content, T[] labelPath) {
     TreeNode currentNode = root;
     
@@ -91,8 +97,10 @@ class Tree<T> {
     currentNode.addChild(newNode);
   }
   
-  // Kinda ugly method to search down one of the labels of the current node
-  // and return a space-joined list of the contents.
+  /**
+   * Kinda ugly method to search down one of the labels of the current node
+   *  and return a space-joined list of the contents.
+   */
   String getContentListFromLabel(T label) {
     // Early exit if the child has no children with that label.
     TreeNode<T> child = this.currentTreeNode.getChildFromLabel(label);
@@ -114,8 +122,10 @@ class Tree<T> {
     return sb.toString();
   }
   
-  // Trace a series of labels and return the TreeNode it leads to.
-  // If a step fails, return null.
+  /**
+   * Trace a series of labels and return the TreeNode it leads to.
+   * If a step fails, return null.
+   */
   TreeNode tracePath(T[] labelPath) {
     TreeNode currentTreeNode = root;
     for (T label : labelPath) {
@@ -127,8 +137,10 @@ class Tree<T> {
     return currentTreeNode;
   }
   
-  // Goes to child TreeNode with the provided label.
-  // If this isn't present, return null and stay.
+  /**
+   * Goes to child TreeNode with the provided label.
+   * If this isn't present, return null and stay.
+   */
   TreeNode crawlDown(T label) {
     TreeNode next = this.currentTreeNode.getChildFromLabel(label);
     if (next != null) {
@@ -137,7 +149,9 @@ class Tree<T> {
     return next;
   }
   
-  // Goes to parent TreeNode. If root, return null and stay.
+  /**
+   * Goes to parent TreeNode. If root, return null and stay.
+   */
   TreeNode crawlUp() {
     if (currentTreeNode.parent == null) {
       return null;
@@ -146,7 +160,9 @@ class Tree<T> {
     return currentTreeNode;
   }
   
-  // Reset current TreeNode to the tree root.
+  /**
+   * Reset current TreeNode to the tree root.
+   */
   void rewind() {
     currentTreeNode = root;
   }

@@ -150,12 +150,16 @@ void drawCommonUI(String presentedText, String enteredText) {
   rect(60, 160, 780, 390);
 }
 
-// Trigger exit dialog (and program exit) next frame.
+/**
+ * Trigger exit dialog (and program exit) next frame.
+ */
 void triggerExit() {
   isFinished = true;
 }
 
-// Show a little dialog telling the user the program is gonna exit. 
+/**
+ * Show a little dialog telling the user the program is gonna exit. 
+ */
 void showExitDialog() {
   JOptionPane.showMessageDialog(null, "All trials are complete, exiting now...");
 }

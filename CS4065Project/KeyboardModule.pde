@@ -20,7 +20,9 @@ abstract class KeyboardModule {
     this.tHandler = pHandler;
   }
   
-  // Deals with everything special-character related.
+  /**
+   * Deals with everything special-character related.
+   */
   void handleSpecialChar(String charString) {
     switch (charString.trim()) {
       case "[bksp]":
@@ -74,7 +76,9 @@ class H4Keyboard extends KeyboardModule {
     this.updateListStrings();
   }
   
-  // Draw the H4 keyboard.
+  /**
+   * Draw the H4 keyboard.
+   */
   void render() {
     // TODO: Move this garbage into a special trapezoid class or
     //       something. God, I hate graphics programming.
@@ -118,7 +122,9 @@ class H4Keyboard extends KeyboardModule {
     rectMode(CORNER);
   }
   
-  // Accept the current selection and add to text.
+  /**
+   * Accept the current selection and add to text.
+   */
   void accept() {
     String content = h4Tree.getCurrentContent();
     if (content == null) {
@@ -144,7 +150,9 @@ class H4Keyboard extends KeyboardModule {
     h4Tree.rewind();
   }
   
-  // Move along the tree in a direction.
+  /**
+   * Move along the tree in a direction.
+   */
   void move(Direction direction) {
     h4Tree.crawlDown(direction);
     currentPath += " " + direction;
@@ -158,8 +166,10 @@ class H4Keyboard extends KeyboardModule {
     this.updateListStrings();
   }
   
-  // Update the four strings used to show users what options are
-  // available to select for each of the four directions.
+  /**
+   * Update the four strings used to show users what options are
+   * available to select for each of the four directions.
+   */
   private void updateListStrings() {
     // BFS down the tree in each direction.
     upList = h4Tree.getContentListFromLabel(Direction.UP);
@@ -183,17 +193,23 @@ class SoftKeyboard extends KeyboardModule {
     this.softMap = softMap;
   }
   
-  // Draw the soft keyboard.
+  /**
+   * Draw the soft keyboard.
+   */
   void render() {
     
   }
   
-  // Accept current selection and add to text.
+  /**
+   * Accept current selection and add to text.
+   */
   void accept() {
     enteredText += softMap.getCurrentContent();
   }
   
-  // Move along the map in a direction.
+  /**
+   * Move along the map in a direction.
+   */
   void move(Direction direction) {
     softMap.crawl(direction);
   }
@@ -210,8 +226,10 @@ public enum Direction {
   LEFT,
   RIGHT;
   
-  // Used by the config-to-data structure stuff in ConfigReader
-  // to allow conversion of ULDR to Direction enum.
+  /**
+   * Used by the config-to-data structure stuff in ConfigReader
+   * to allow conversion of ULDR to Direction enum.
+   */
   public static Direction stringToDirection(String str) {
     if (str.equals("U")) {
       return Direction.UP;
@@ -225,8 +243,10 @@ public enum Direction {
     return null;
   }
   
-  // Applying above to an array. This could be done easily in ConfigReader
-  // using Java 8 but its not supported in Processing :(
+  /**
+   * Applying above to an array. This could be done easily in ConfigReader
+   * using Java 8 but its not supported in Processing :(
+   */
   public static Direction[] stringToDirection(String[] strs) {
     Direction[] directions = new Direction[strs.length];
     for (int i = 0; i < strs.length; i++) {

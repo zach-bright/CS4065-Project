@@ -10,7 +10,9 @@ public abstract class InputMethod {
   PApplet applet;
   KeyboardModule kbModule;
   
-  // Registers the applet and module with this input method.
+  /**
+   * Registers the applet and module with this input method.
+   */
   protected InputMethod(PApplet applet, KeyboardModule kbModule) {
     this.applet = applet;
     this.kbModule = kbModule;
@@ -29,8 +31,10 @@ public class WASD extends InputMethod {
     applet.registerMethod("keyEvent", this);
   }
   
-  // Convert a released-key event into a form that kbModule understands,
-  // and pass it to the right method. WASD->ULDR->move(ULDR), ENTER->accept().
+  /**
+   * Convert a released-key event into a form that kbModule understands,
+   * and pass it to the right method. WASD->ULDR->move(ULDR), ENTER->accept().
+   */
   public void keyEvent(KeyEvent event) {
     // Only accept key-release events.
     if (event.getAction() != KeyEvent.RELEASE) {

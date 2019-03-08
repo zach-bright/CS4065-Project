@@ -11,8 +11,10 @@ class ConfigReader {
     this.configReader = configReader;
   }
   
-  // Construct an H4 tree from the saved config file.
-  // Doesn't need to be that fast, because we only call it once.
+  /**
+   * Construct an H4 tree from the saved config file.
+   * Doesn't need to be that fast, because we only call it once.
+   */
   public Tree<Direction> buildH4Tree() throws IOException {
     TreeNode<Direction> root = new TreeNode("", "", null);
     Tree<Direction> h4Tree = new Tree(root);
@@ -34,8 +36,10 @@ class ConfigReader {
     return h4Tree;
   }
   
-  // Construct a Map from a saved config file, to be used
-  // in the soft keyboard.
+  /** 
+   * Construct a Map from a saved config file, to be used
+   * in the soft keyboard.
+   */
   public Map<Direction> buildSoftMap() throws IOException {
     // TODO: write this builder
     
