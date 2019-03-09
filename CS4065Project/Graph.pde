@@ -14,7 +14,7 @@ class GraphNode {
   
   GraphNode(String content) {
     this.content = content;
-    this.button = null;
+    this.button = new Button(content);
   }
   
   boolean equals(GraphNode otherNode) {

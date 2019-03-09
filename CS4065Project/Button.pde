@@ -36,10 +36,11 @@ class Button {
       } else {
         fill(buttonUnselected);
       }
-      rect(x, y, w, h);
+      rect(x, y, w, h); //<>// //<>//
       fill(black);
-      textAlign(CENTER, TOP);
-      text(this.label, (this.x + this.w)/2, (this.y + this.h)/2);
+      textFont(buttonFont);
+      textAlign(CENTER, CENTER);
+      text(this.label, this.x + (this.w / 2), this.y + (this.h / 2));
     }
   }
 }

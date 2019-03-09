@@ -26,28 +26,28 @@ abstract class KeyboardModule {
     switch (charString.trim()) {
       case "[bksp]":
         // Trim last char from text.
-        if (enteredText.length() > 0) {
-          enteredText = enteredText.substring(0, enteredText.length() - 1);
+        if (this.enteredText.length() > 0) {
+          this.enteredText = enteredText.substring(0, enteredText.length() - 1);
         }
         break;
       case "[space]":
         // Add space to text.
-        enteredText += " ";
+        this.enteredText += " ";
         break;
       case "[enter]":
         // [enter] means the user wants to submit the current enteredText as 
         // the answer. So, get pHandler to record test and start new one.
-        tHandler.recordTest(enteredText);
-        tHandler.nextTest();
+        this.tHandler.recordTest(this.enteredText);
+        this.tHandler.nextTest();
         // Teardown to prepare for next test.
-        enteredText = "";
-        shift = false;  
+        this.enteredText = "";
+        this.shift = false;  
         break;
       case "[shift]":
-        shift = true;
+        this.shift = true;
         break;
       case "[caps]":
-        caps = !caps;
+        this.caps = !this.caps;
         break;
       case "[sym]":
         // TODO: No clue what this one does.
@@ -67,7 +67,7 @@ abstract class KeyboardModule {
  */
 class H4Keyboard extends KeyboardModule {
   Tree<Direction> h4Tree;
-    String currentPath = "";
+  String currentPath = "";
   
   H4Keyboard(Tree<Direction> h4Tree, TestHandler tHandler) {
     super(tHandler);
@@ -134,7 +134,7 @@ class H4Keyboard extends KeyboardModule {
    * Accept the current selection and add to text.
    */
   void accept() {
-    String content = h4Tree.getCurrentContent();
+    String content = this.h4Tree.getCurrentContent();
     if (content == null) {
       return;
     }
@@ -146,24 +146,24 @@ class H4Keyboard extends KeyboardModule {
       // Just like on normal keyboards, capitalize if shift or caps
       // is on, but not if both are on.
       if (this.shift ^ this.caps) {
-        enteredText += content.toUpperCase();
+        this.enteredText += content.toUpperCase();
       } else {
-        enteredText += content;
+        this.enteredText += content;
       }
       // Turn off shift if we added alphanumeric.
-      shift = false;
+      this.shift = false;
     }
     
-    currentPath = "";
-    h4Tree.rewind();
+    this.currentPath = "";
+    this.h4Tree.rewind();
   }
   
   /**
    * Move along the tree in a direction.
    */
   void move(Direction direction) {
-    h4Tree.crawlDown(direction);
-    currentPath += " " + direction;
+    this.h4Tree.crawlDown(direction);
+    this.currentPath += " " + direction;
     
     // If we moved to leaf, auto-accept.
     if (h4Tree.currentTreeNode.isLeaf()) {
@@ -180,10 +180,10 @@ class H4Keyboard extends KeyboardModule {
    */
   private void updateListStrings() {
     // BFS down the tree in each direction.
-    upList = h4Tree.getContentListFromLabel(Direction.UP);
-    leftList = h4Tree.getContentListFromLabel(Direction.LEFT);
-    downList = h4Tree.getContentListFromLabel(Direction.DOWN);
-    rightList = h4Tree.getContentListFromLabel(Direction.RIGHT);
+    this.upList = this.h4Tree.getContentListFromLabel(Direction.UP);
+    this.leftList = this.h4Tree.getContentListFromLabel(Direction.LEFT);
+    this.downList = this.h4Tree.getContentListFromLabel(Direction.DOWN);
+    this.rightList = this.h4Tree.getContentListFromLabel(Direction.RIGHT);
   }
 }
 
@@ -200,7 +200,8 @@ class SoftKeyboard extends KeyboardModule {
     super(tHandler);
     this.softGraph = softGraph;
     
-    // Initialize the buttons into a grid.
+    // Initialize all buttons.
+    this.initializeButtons();
   }
   
   /**
@@ -208,7 +209,7 @@ class SoftKeyboard extends KeyboardModule {
    */
   void render() {
     // Render all the buttons.
-    for (GraphNode n : softGraph.mapKeys) {
+    for (GraphNode n : this.softGraph.mapKeys) {
       n.button.render();
     }
   }
@@ -217,7 +218,7 @@ class SoftKeyboard extends KeyboardModule {
    * Accept current selection and add to text.
    */
   void accept() {
-    String content = softGraph.getCurrentContent();
+    String content = this.softGraph.getCurrentContent();
     if (content == null) {
       return;
     }
@@ -229,22 +230,39 @@ class SoftKeyboard extends KeyboardModule {
       // Just like on normal keyboards, capitalize if shift or caps
       // is on, but not if both are on.
       if (this.shift ^ this.caps) {
-        enteredText += content.toUpperCase();
+        this.enteredText += content.toUpperCase();
       } else {
-        enteredText += content;
+        this.enteredText += content;
       }
       // Turn off shift if we added alphanumeric.
-      shift = false;
+      this.shift = false;
     }
     
-    enteredText += content;
+    this.enteredText += content;
   }
   
   /**
    * Move along the graph in a direction.
    */
   void move(Direction direction) {
-    softGraph.crawl(direction);
+    this.softGraph.crawl(direction);
+  }
+  
+  void initializeButtons() {
+    int h = 50, w = 50;
+    int padding = 4;
+    
+    int i = 0;
+    int startingY = 160, currentX = 60, currentY = 160;
+    for (GraphNode g : this.softGraph.mapKeys) {
+      g.button.setBox(currentX, currentY, w, h);
+      if (i++ % 4 == 3) {
+        currentY = startingY;
+        currentX += w + padding;
+      } else {
+        currentY += h + padding;
+      }
+    }
   }
 }
 

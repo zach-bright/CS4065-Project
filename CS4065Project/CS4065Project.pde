@@ -13,8 +13,8 @@ final String configPhrases = "phrases.txt";
 final String outputFile = "records.txt";
 
 final color black = #252525;
-final color buttonUnselected = #D1D1D1;
-final color buttonSelected = #F5F3BE;
+final color buttonUnselected = #FFFFFF;
+final color buttonSelected = #FFFB8B;
 final color highlight = #F1F1F1;
 final color background = #DDCCA1;
 PFont presentedTextFont, enteredTextFont, buttonFont;
@@ -36,7 +36,6 @@ void setup() {
   // Load fonts.
   presentedTextFont = loadFont("Georgia-Bold-32.vlw");
   enteredTextFont = loadFont("Georgia-26.vlw");
-  buttonFont = loadFont("Arial-BoldMT-16.vlw");
   
   try {
     // Get user ID, use it to make output filename, build test handler obj.
@@ -99,12 +98,14 @@ KeyboardModule buildKeyboardModule() throws IOException {
     ConfigReader cr = new ConfigReader(configFile);
     Tree<Direction> tc = cr.buildH4Tree();
     chosenKB = new H4Keyboard(tc, tHandler);
+    buttonFont = loadFont("Arial-BoldMT-16.vlw");
   } else {
     // Condition 1 is for the Soft keyboard.
     BufferedReader configFile = createReader(configFolder + File.separator + configSoft);
     ConfigReader cr = new ConfigReader(configFile);
     Graph<Direction> tc = cr.buildSoftGraph();
     chosenKB = new SoftKeyboard(tc, tHandler);
+    buttonFont = loadFont("Arial-BoldMT-20.vlw");
   }
   return chosenKB;
 }
