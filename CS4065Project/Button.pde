@@ -18,7 +18,7 @@ class Button {
   }
   
   void toggleSelected() {
-    this.isSelected = !this.isSelected;
+    this.isSelected = !this.isSelected; //<>//
   }
   
   void setBox(int x, int y, int w, int h) {
@@ -36,7 +36,7 @@ class Button {
       } else {
         fill(buttonUnselected);
       }
-      rect(x, y, w, h); //<>// //<>//
+      rect(x, y, w, h);
       fill(black);
       textFont(buttonFont);
       textAlign(CENTER, CENTER);

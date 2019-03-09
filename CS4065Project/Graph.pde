@@ -17,8 +17,19 @@ class GraphNode {
     this.button = new Button(content);
   }
   
-  boolean equals(GraphNode otherNode) {
-    return otherNode.content.equals(this.content);
+  @Override
+  public boolean equals(Object other) {
+    if (other == this) {
+      return true;
+    } else if (!(other instanceof GraphNode)) {
+      return false;
+    }
+    return ((GraphNode)other).content.equals(this.content); //<>//
+  }
+  
+  @Override
+  public int hashCode() {
+    return content.hashCode();
   }
 }
 
@@ -46,7 +57,7 @@ class Graph<T> {
   }
   
   GraphNode getNodeWithKey(String k) {
-    for (GraphNode g : nodeMap.keySet()) {
+    for (GraphNode g : mapKeys) {
       if (g.content.equals(k)) {
         return g;
       }
@@ -57,9 +68,9 @@ class Graph<T> {
   // Crawl to a node with provided label. If none is found, return
   // null and stay.
   GraphNode crawl(T label) {
-    currentNode.button.toggleSelected();
-    currentNode = nodeMap.get(currentNode).get(label); //<>// //<>//
-    currentNode.button.toggleSelected();
+    this.currentNode.button.toggleSelected(); //<>//
+    this.currentNode = nodeMap.get(this.currentNode).get(label);
+    this.currentNode.button.toggleSelected();
     return currentNode;
   }
   
