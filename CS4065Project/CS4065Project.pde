@@ -104,8 +104,7 @@ KeyboardModule buildKeyboardModule() throws IOException {
     BufferedReader configFile = createReader(configFolder + File.separator + configSoft);
     ConfigReader cr = new ConfigReader(configFile);
     Graph<Direction> tc = cr.buildSoftGraph();
-    List<List<Button>> buttonList = cr.buttonList;
-    chosenKB = new SoftKeyboard(tc, tHandler, buttonList);
+    chosenKB = new SoftKeyboard(tc, tHandler);
   }
   return chosenKB;
 }

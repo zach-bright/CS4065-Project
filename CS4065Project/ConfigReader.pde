@@ -6,7 +6,6 @@
  */
 class ConfigReader {
   BufferedReader configReader;
-  List<List<Button>> buttonList;
   
   ConfigReader(BufferedReader configReader) {
     this.configReader = configReader;
@@ -43,11 +42,8 @@ class ConfigReader {
    */
   public Graph<Direction> buildSoftGraph() throws IOException {
     Graph<Direction> softGraph = new Graph();
-    buttonList = new ArrayList<List<Button>>();
     
     String line;
-    int i = 0;
-    List<Button> buttonRow = new ArrayList<Button>();
     while ((line = configReader.readLine()) != null) {
       // Config line has some key content, then a tab, then space-separated 
       // neighbor keys in order U R D L (clockwise).
@@ -65,13 +61,6 @@ class ConfigReader {
       neighborNodes.put(Direction.LEFT, new GraphNode(neighbors[3]));
       // Add to the graph.
       softGraph.addNode(center, neighborNodes);
-      
-      // Construct the corresponding button. Buttons are in a 4x10 grid.
-      if (i++ % 4 == 3) {
-        buttonList.add(buttonRow);
-        buttonRow = new ArrayList<Button>();
-      }
-      buttonRow.add(new Button(content));
     }
     
     // Set current node to "q".

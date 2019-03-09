@@ -195,20 +195,22 @@ class H4Keyboard extends KeyboardModule {
  */
 class SoftKeyboard extends KeyboardModule {
   Graph<Direction> softGraph;
-  List<List<Button>> buttonList;
-  Button currentButton;
   
-  SoftKeyboard(Graph<Direction> softGraph, TestHandler tHandler, List<List<Button>> buttonList) {
+  SoftKeyboard(Graph<Direction> softGraph, TestHandler tHandler) {
     super(tHandler);
     this.softGraph = softGraph;
-    this.buttonList = buttonList;
+    
+    // Initialize the buttons into a grid.
   }
   
   /**
    * Draw the soft keyboard.
    */
   void render() {
-    
+    // Render all the buttons.
+    for (GraphNode n : softGraph.mapKeys) {
+      n.button.render();
+    }
   }
   
   /**

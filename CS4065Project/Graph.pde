@@ -5,9 +5,16 @@
  */
 class GraphNode {
   String content;
+  Button button;
+  
+  GraphNode(String content, Button button) {
+    this.content = content;
+    this.button = button;
+  }
   
   GraphNode(String content) {
     this.content = content;
+    this.button = null;
   }
   
   boolean equals(GraphNode otherNode) {
@@ -25,14 +32,17 @@ class GraphNode {
 class Graph<T> {
   GraphNode currentNode;
   Map<GraphNode, Map<T, GraphNode>> nodeMap;
+  List<GraphNode> mapKeys;
   
   Graph() {
     currentNode = null;
     nodeMap = new HashMap<GraphNode, Map<T, GraphNode>>();
+    mapKeys = new ArrayList<GraphNode>();
   }
   
   void addNode(GraphNode node, Map<T, GraphNode> neighbors) {
     nodeMap.put(node, neighbors);
+    mapKeys.add(node);
   }
   
   GraphNode getNodeWithKey(String k) {
@@ -47,7 +57,9 @@ class Graph<T> {
   // Crawl to a node with provided label. If none is found, return
   // null and stay.
   GraphNode crawl(T label) {
-    currentNode = nodeMap.get(currentNode).get(label); //<>//
+    currentNode.button.toggleSelected();
+    currentNode = nodeMap.get(currentNode).get(label); //<>// //<>//
+    currentNode.button.toggleSelected();
     return currentNode;
   }
   

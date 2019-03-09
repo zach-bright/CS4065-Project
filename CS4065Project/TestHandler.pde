@@ -99,7 +99,7 @@ class TestHandler {
     }
     
     // Build up the distance array.
-    int subCost; //<>// //<>// //<>// //<>// //<>//
+    int subCost; //<>//
     for (int j = 1; j <= p2Len; j++) {
       for (int i = 1; i <= p1Len; i++) {
         // If chars are the same, substitution is cost 0.
