@@ -13,6 +13,8 @@ final String configPhrases = "phrases.txt";
 final String outputFile = "records.txt";
 
 final color black = #252525;
+final color buttonUnselected = #FFFFFF;
+final color buttonSelected = #FFFB8B;
 final color highlight = #F1F1F1;
 final color background = #DDCCA1;
 PFont presentedTextFont, enteredTextFont, buttonFont;
@@ -34,7 +36,6 @@ void setup() {
   // Load fonts.
   presentedTextFont = loadFont("Georgia-Bold-32.vlw");
   enteredTextFont = loadFont("Georgia-26.vlw");
-  buttonFont = loadFont("Arial-BoldMT-16.vlw");
   
   try {
     // Get user ID, use it to make output filename, build test handler obj.
@@ -97,10 +98,14 @@ KeyboardModule buildKeyboardModule() throws IOException {
     ConfigReader cr = new ConfigReader(configFile);
     Tree<Direction> tc = cr.buildH4Tree();
     chosenKB = new H4Keyboard(tc, tHandler);
+    buttonFont = loadFont("Arial-BoldMT-16.vlw");
   } else {
     // Condition 1 is for the Soft keyboard.
-    // TODO: Write condition 1 initializer.
-    throw new IOException("Condition not implemented.");
+    BufferedReader configFile = createReader(configFolder + File.separator + configSoft);
+    ConfigReader cr = new ConfigReader(configFile);
+    Graph<Direction> tc = cr.buildSoftGraph();
+    chosenKB = new SoftKeyboard(tc, tHandler);
+    buttonFont = loadFont("Arial-BoldMT-20.vlw");
   }
   return chosenKB;
 }
@@ -150,12 +155,16 @@ void drawCommonUI(String presentedText, String enteredText) {
   rect(60, 160, 780, 390);
 }
 
-// Trigger exit dialog (and program exit) next frame.
+/**
+ * Trigger exit dialog (and program exit) next frame.
+ */
 void triggerExit() {
   isFinished = true;
 }
 
-// Show a little dialog telling the user the program is gonna exit. 
+/**
+ * Show a little dialog telling the user the program is gonna exit. 
+ */
 void showExitDialog() {
   JOptionPane.showMessageDialog(null, "All trials are complete, exiting now...");
 }

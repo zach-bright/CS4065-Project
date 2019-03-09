@@ -9,43 +9,72 @@ class TestHandler {
   PrintWriter writer;
   String[] phrases;
   String currentPhrase;
-  int currentPhraseIndex;
+  int currentPhraseIndex, trialCount;
   
   int trialStartTime;
   
   TestHandler(String[] phrases, String outputFileName) {
     this.phrases = phrases;
     this.writer = createWriter(outputFileName);
-    currentPhraseIndex = 0;
-    currentPhrase = phrases[0];
+    this.currentPhraseIndex = 0;
+    this.currentPhrase = phrases[0];
+    // TODO: set this once we enable the trials (or something...)
+    this.trialCount = 1;
+    
+    // Write header line.
+    this.writer.println("Trial #\tTime Elapsed (ms)\tWPM\tL Distance");
   }
   
-  // Record a test as being completed.
+  /**
+   * Record a test as being completed.
+   */
   public void recordTest(String enteredText) {
     int trialTime = millis() - trialStartTime;
     int distance = this.levenshteinDistance(currentPhrase, enteredText);
-    writer.println(trialTime + "\t" + distance);
+    String wpmString = String.format("%.4f", this.wpm(enteredText, trialTime));
+    this.writer.println(trialCount + "\t" + trialTime + "\t" + wpmString + "\t" + distance);
   }
   
-  // Advance to next phrase. If there are no more phrases, do
-  // teardown of writer (flush, close) and call teardown method in
-  // parent class (CS4065Project).
+  /**
+   * Advance to next phrase. If there are no more phrases, do
+   * teardown of writer (flush, close) and call teardown method in
+   * parent class (CS4065Project).
+   */
   public void nextTest() {
     if (currentPhraseIndex >= phrases.length - 1) {
-      writer.flush();
-      writer.close();
+      this.writer.flush();
+      this.writer.close();
       triggerExit();
       return;
     }
     
+    // Setup for next trial.
+    this.trialCount++;
+    this.currentPhraseIndex++;
+    this.currentPhrase = this.phrases[this.currentPhraseIndex];
     trialStartTime = millis();
-    currentPhraseIndex++;
-    currentPhrase = phrases[currentPhraseIndex];
   }
   
-  // Calculate Levenshtein distance between phrases. This is the number
-  // of deletions, insertions, or substitutions needed to turn phrase1
-  // into phrase2. This uses dynamic programming.
+  /**
+   * Calculates words-per-minute.
+   */
+  private double wpm(String text, int time) {
+    // split() is stupid and returns a non-empty array on empty string, 
+    // so we need to check that before calculating wpm.
+    if ("".equals(text)) {
+      return 0.0;
+    }
+    
+    double wordCount = text.trim().split("\\s+").length; //<>// //<>//
+    double minutes = ((double)time / 1000) / 60;
+    return wordCount / minutes;
+  }
+  
+  /**
+   * Calculate Levenshtein distance between phrases. This is the number
+   * of deletions, insertions, or substitutions needed to turn phrase1
+   * into phrase2. This uses dynamic programming.
+   */
   private int levenshteinDistance(String p1, String p2) {
     int p1Len = p1.length();
     int p2Len = p2.length();
@@ -70,7 +99,7 @@ class TestHandler {
     }
     
     // Build up the distance array.
-    int subCost; //<>//
+    int subCost; //<>// //<>//
     for (int j = 1; j <= p2Len; j++) {
       for (int i = 1; i <= p1Len; i++) {
         // If chars are the same, substitution is cost 0.
@@ -93,7 +122,9 @@ class TestHandler {
     return dist[p1Len][p2Len];
   }
   
-  // Minimum of three integers.
+  /** 
+   * Minimum of three integers.
+   */
   private int tripleMin(int a, int b, int c) {
     int min = a;
     if (b < min) {

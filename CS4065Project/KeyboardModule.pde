@@ -9,7 +9,6 @@ abstract class KeyboardModule {
   TestHandler tHandler;
   String upList, leftList, downList, rightList;
   String enteredText = "";
-  String currentPath = "";
   boolean shift = false, caps = false;
   
   abstract void render();
@@ -20,34 +19,35 @@ abstract class KeyboardModule {
     this.tHandler = pHandler;
   }
   
-  // Deals with everything special-character related.
+  /**
+   * Deals with everything special-character related.
+   */
   void handleSpecialChar(String charString) {
     switch (charString.trim()) {
       case "[bksp]":
         // Trim last char from text.
-        if (enteredText.length() > 0) {
-          enteredText = enteredText.substring(0, enteredText.length() - 1);
+        if (this.enteredText.length() > 0) {
+          this.enteredText = enteredText.substring(0, enteredText.length() - 1);
         }
         break;
       case "[space]":
         // Add space to text.
-        enteredText += " ";
+        this.enteredText += " ";
         break;
       case "[enter]":
         // [enter] means the user wants to submit the current enteredText as 
         // the answer. So, get pHandler to record test and start new one.
-        tHandler.recordTest(enteredText);
-        tHandler.nextTest();
+        this.tHandler.recordTest(this.enteredText);
+        this.tHandler.nextTest();
         // Teardown to prepare for next test.
-        enteredText = "";
-        shift = false;
-        caps = false;
+        this.enteredText = "";
+        this.shift = false;  
         break;
       case "[shift]":
-        shift = true;
+        this.shift = true;
         break;
       case "[caps]":
-        caps = !caps;
+        this.caps = !this.caps;
         break;
       case "[sym]":
         // TODO: No clue what this one does.
@@ -67,6 +67,7 @@ abstract class KeyboardModule {
  */
 class H4Keyboard extends KeyboardModule {
   Tree<Direction> h4Tree;
+  String currentPath = "";
   
   H4Keyboard(Tree<Direction> h4Tree, TestHandler tHandler) {
     super(tHandler);
@@ -74,7 +75,9 @@ class H4Keyboard extends KeyboardModule {
     this.updateListStrings();
   }
   
-  // Draw the H4 keyboard.
+  /**
+   * Draw the H4 keyboard.
+   */
   void render() {
     // TODO: Move this garbage into a special trapezoid class or
     //       something. God, I hate graphics programming.
@@ -110,17 +113,28 @@ class H4Keyboard extends KeyboardModule {
     textFont(buttonFont);
     textAlign(CENTER, CENTER);
     rectMode(CENTER);
-    text(upList, width/2, 225, 100, 100);
-    text(leftList, 200, 350, 100, 100);
-    text(downList, width/2, 485, 100, 100);
-    text(rightList, 700, 350, 100, 100);
-    text(currentPath, width/2, 355, 100, 100);
+    // TODO: Clean this up as well.
+    if (this.shift ^ this.caps) {
+      text(upList.toUpperCase(), width/2, 225, 100, 100);
+      text(leftList.toUpperCase(), 200, 350, 100, 100);
+      text(downList.toUpperCase(), width/2, 485, 100, 100);
+      text(rightList.toUpperCase(), 700, 350, 100, 100);
+      text(currentPath.toUpperCase(), width/2, 355, 100, 100);
+    } else {
+      text(upList, width/2, 225, 100, 100);
+      text(leftList, 200, 350, 100, 100);
+      text(downList, width/2, 485, 100, 100);
+      text(rightList, 700, 350, 100, 100);
+      text(currentPath, width/2, 355, 100, 100);
+    }
     rectMode(CORNER);
   }
   
-  // Accept the current selection and add to text.
+  /**
+   * Accept the current selection and add to text.
+   */
   void accept() {
-    String content = h4Tree.getCurrentContent();
+    String content = this.h4Tree.getCurrentContent();
     if (content == null) {
       return;
     }
@@ -132,22 +146,24 @@ class H4Keyboard extends KeyboardModule {
       // Just like on normal keyboards, capitalize if shift or caps
       // is on, but not if both are on.
       if (this.shift ^ this.caps) {
-        enteredText += content.toUpperCase();
+        this.enteredText += content.toUpperCase();
       } else {
-        enteredText += content;
+        this.enteredText += content;
       }
       // Turn off shift if we added alphanumeric.
-      shift = false;
+      this.shift = false;
     }
     
-    currentPath = "";
-    h4Tree.rewind();
+    this.currentPath = "";
+    this.h4Tree.rewind();
   }
   
-  // Move along the tree in a direction.
+  /**
+   * Move along the tree in a direction.
+   */
   void move(Direction direction) {
-    h4Tree.crawlDown(direction);
-    currentPath += " " + direction;
+    this.h4Tree.crawlDown(direction);
+    this.currentPath += " " + direction;
     
     // If we moved to leaf, auto-accept.
     if (h4Tree.currentTreeNode.isLeaf()) {
@@ -158,14 +174,16 @@ class H4Keyboard extends KeyboardModule {
     this.updateListStrings();
   }
   
-  // Update the four strings used to show users what options are
-  // available to select for each of the four directions.
+  /**
+   * Update the four strings used to show users what options are
+   * available to select for each of the four directions.
+   */
   private void updateListStrings() {
     // BFS down the tree in each direction.
-    upList = h4Tree.getContentListFromLabel(Direction.UP);
-    leftList = h4Tree.getContentListFromLabel(Direction.LEFT);
-    downList = h4Tree.getContentListFromLabel(Direction.DOWN);
-    rightList = h4Tree.getContentListFromLabel(Direction.RIGHT);
+    this.upList = this.h4Tree.getContentListFromLabel(Direction.UP);
+    this.leftList = this.h4Tree.getContentListFromLabel(Direction.LEFT);
+    this.downList = this.h4Tree.getContentListFromLabel(Direction.DOWN);
+    this.rightList = this.h4Tree.getContentListFromLabel(Direction.RIGHT);
   }
 }
 
@@ -176,26 +194,73 @@ class H4Keyboard extends KeyboardModule {
  * digital keyboards on video game consoles.
  */
 class SoftKeyboard extends KeyboardModule {
-  Map<Direction> softMap;
+  Graph<Direction> softGraph;
   
-  SoftKeyboard(Map<Direction> softMap, TestHandler tHandler) {
+  SoftKeyboard(Graph<Direction> softGraph, TestHandler tHandler) {
     super(tHandler);
-    this.softMap = softMap;
-  }
-  
-  // Draw the soft keyboard.
-  void render() {
+    this.softGraph = softGraph;
     
+    // Initialize all buttons.
+    this.initializeButtons();
   }
   
-  // Accept current selection and add to text.
+  /**
+   * Draw the soft keyboard.
+   */
+  void render() {
+    // Render all the buttons.
+    for (GraphNode n : this.softGraph.mapKeys) {
+      n.button.render();
+    }
+  }
+  
+  /**
+   * Accept current selection and add to text.
+   */
   void accept() {
-    enteredText += softMap.getCurrentContent();
+    String content = this.softGraph.getCurrentContent();
+    if (content == null) {
+      return;
+    }
+    
+    // Check if content is a special character.
+    if (content.matches("(\\[.*\\])")) {
+      this.handleSpecialChar(content);
+    } else {
+      // Just like on normal keyboards, capitalize if shift or caps
+      // is on, but not if both are on.
+      if (this.shift ^ this.caps) {
+        this.enteredText += content.toUpperCase();
+      } else {
+        this.enteredText += content;
+      }
+      // Turn off shift if we added alphanumeric.
+      this.shift = false;
+    }
   }
   
-  // Move along the map in a direction.
+  /**
+   * Move along the graph in a direction.
+   */
   void move(Direction direction) {
-    softMap.crawl(direction);
+    this.softGraph.crawl(direction);
+  }
+  
+  void initializeButtons() {
+    int h = 50, w = 50;
+    int padding = 4;
+    
+    int i = 0;
+    int startingY = 160, currentX = 60, currentY = 160;
+    for (GraphNode g : this.softGraph.mapKeys) {
+      g.button.setBox(currentX, currentY, w, h);
+      if (i++ % 4 == 3) {
+        currentY = startingY;
+        currentX += w + padding;
+      } else {
+        currentY += h + padding;
+      }
+    }
   }
 }
 
@@ -206,12 +271,14 @@ class SoftKeyboard extends KeyboardModule {
  */
 public enum Direction {
   UP,
+  RIGHT,
   DOWN,
-  LEFT,
-  RIGHT;
+  LEFT;
   
-  // Used by the config-to-data structure stuff in ConfigReader
-  // to allow conversion of ULDR to Direction enum.
+  /**
+   * Used by the config-to-data structure stuff in ConfigReader
+   * to allow conversion of ULDR to Direction enum.
+   */
   public static Direction stringToDirection(String str) {
     if (str.equals("U")) {
       return Direction.UP;
@@ -225,8 +292,10 @@ public enum Direction {
     return null;
   }
   
-  // Applying above to an array. This could be done easily in ConfigReader
-  // using Java 8 but its not supported in Processing :(
+  /**
+   * Applying above to an array. This could be done easily in ConfigReader
+   * using Java 8 but its not supported in Processing :(
+   */
   public static Direction[] stringToDirection(String[] strs) {
     Direction[] directions = new Direction[strs.length];
     for (int i = 0; i < strs.length; i++) {

@@ -11,8 +11,10 @@ class ConfigReader {
     this.configReader = configReader;
   }
   
-  // Construct an H4 tree from the saved config file.
-  // Doesn't need to be that fast, because we only call it once.
+  /**
+   * Construct an H4 tree from the saved config file.
+   * Doesn't need to be that fast, because we only call it once.
+   */
   public Tree<Direction> buildH4Tree() throws IOException {
     TreeNode<Direction> root = new TreeNode("", "", null);
     Tree<Direction> h4Tree = new Tree(root);
@@ -34,13 +36,36 @@ class ConfigReader {
     return h4Tree;
   }
   
-  // Construct a Map from a saved config file, to be used
-  // in the soft keyboard.
-  public Map<Direction> buildSoftMap() throws IOException {
-    // TODO: write this builder
+  /**
+   * Construct a Graph from a saved config file, to be used
+   * in the soft keyboard.
+   */
+  public Graph<Direction> buildSoftGraph() throws IOException {
+    Graph<Direction> softGraph = new Graph();
     
+    String line;
+    while ((line = configReader.readLine()) != null) {
+      // Config line has some key content, then a tab, then space-separated 
+      // neighbor keys in order U R D L (clockwise).
+      String[] splitLine = line.trim().split("\t");
+      String content = splitLine[0];
+      String[] neighbors = splitLine[1].split(" ");
+      
+      // Create a node representing this line's content.
+      GraphNode center = new GraphNode(content);
+      // Make a map from center to neighbor nodes and fill with content.
+      Map<Direction, GraphNode> neighborNodes = new HashMap<Direction, GraphNode>();
+      neighborNodes.put(Direction.UP, new GraphNode(neighbors[0]));
+      neighborNodes.put(Direction.RIGHT, new GraphNode(neighbors[1]));
+      neighborNodes.put(Direction.DOWN, new GraphNode(neighbors[2]));
+      neighborNodes.put(Direction.LEFT, new GraphNode(neighbors[3]));
+      // Add to the graph.
+      softGraph.addNode(center, neighborNodes);
+    }
     
-    // Config contains a key and its surrounding keys, in order U, D, L, R.
-    return null;
+    // Set current node to "q".
+    softGraph.currentNode = softGraph.getNodeWithKey("q");
+    softGraph.currentNode.button.toggleSelected();
+    return softGraph;
   }
 }
