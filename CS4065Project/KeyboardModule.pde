@@ -237,8 +237,6 @@ class SoftKeyboard extends KeyboardModule {
       // Turn off shift if we added alphanumeric.
       this.shift = false;
     }
-    
-    this.enteredText += content;
   }
   
   /**

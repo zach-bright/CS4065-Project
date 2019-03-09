@@ -71,7 +71,7 @@ class Graph<T> {
     this.currentNode.button.toggleSelected(); //<>//
     this.currentNode = nodeMap.get(this.currentNode).get(label);
     this.currentNode.button.toggleSelected();
-    return currentNode;
+    return this.currentNode;
   }
   
   String getCurrentContent() {

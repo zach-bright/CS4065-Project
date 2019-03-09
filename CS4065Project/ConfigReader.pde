@@ -65,7 +65,7 @@ class ConfigReader {
     
     // Set current node to "q".
     softGraph.currentNode = softGraph.getNodeWithKey("q");
-    softGraph.currentNode.button.toggleSelected();;
+    softGraph.currentNode.button.toggleSelected();
     return softGraph;
   }
 }

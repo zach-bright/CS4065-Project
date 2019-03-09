@@ -30,17 +30,18 @@ class Button {
   }
   
   void render() {
-    if (this.isRenderable) {
-      if (this.isSelected) {
-        fill(buttonSelected);
-      } else {
-        fill(buttonUnselected);
-      }
-      rect(x, y, w, h);
-      fill(black);
-      textFont(buttonFont);
-      textAlign(CENTER, CENTER);
-      text(this.label, this.x + (this.w / 2), this.y + (this.h / 2));
+    if (!this.isRenderable) {
+      return;
+    } //<>//
+    if (this.isSelected) {
+      fill(buttonSelected);
+    } else {
+      fill(buttonUnselected);
     }
+    rect(x, y, w, h);
+    fill(black);
+    textFont(buttonFont);
+    textAlign(CENTER, CENTER);
+    text(this.label, this.x + (this.w / 2), this.y + (this.h / 2));
   }
 }
