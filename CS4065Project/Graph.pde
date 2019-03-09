@@ -35,10 +35,19 @@ class Graph<T> {
     nodeMap.put(node, neighbors);
   }
   
+  GraphNode getNodeWithKey(String k) {
+    for (GraphNode g : nodeMap.keySet()) {
+      if (g.content.equals(k)) {
+        return g;
+      }
+    }
+    return null;
+  }
+  
   // Crawl to a node with provided label. If none is found, return
   // null and stay.
   GraphNode crawl(T label) {
-    currentNode = nodeMap.get(currentNode).get(label);
+    currentNode = nodeMap.get(currentNode).get(label); //<>//
     return currentNode;
   }
   

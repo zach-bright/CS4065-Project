@@ -13,6 +13,8 @@ final String configPhrases = "phrases.txt";
 final String outputFile = "records.txt";
 
 final color black = #252525;
+final color buttonUnselected = #D1D1D1;
+final color buttonSelected = #F5F3BE;
 final color highlight = #F1F1F1;
 final color background = #DDCCA1;
 PFont presentedTextFont, enteredTextFont, buttonFont;
@@ -102,7 +104,8 @@ KeyboardModule buildKeyboardModule() throws IOException {
     BufferedReader configFile = createReader(configFolder + File.separator + configSoft);
     ConfigReader cr = new ConfigReader(configFile);
     Graph<Direction> tc = cr.buildSoftGraph();
-    chosenKB = new SoftKeyboard(tc, tHandler);
+    List<List<Button>> buttonList = cr.buttonList;
+    chosenKB = new SoftKeyboard(tc, tHandler, buttonList);
   }
   return chosenKB;
 }

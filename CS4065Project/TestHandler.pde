@@ -65,7 +65,7 @@ class TestHandler {
       return 0.0;
     }
     
-    double wordCount = text.trim().split("\\s+").length; //<>// //<>// //<>// //<>// //<>//
+    double wordCount = text.trim().split("\\s+").length; //<>//
     double minutes = ((double)time / 1000) / 60;
     return wordCount / minutes;
   }

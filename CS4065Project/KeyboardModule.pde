@@ -9,7 +9,6 @@ abstract class KeyboardModule {
   TestHandler tHandler;
   String upList, leftList, downList, rightList;
   String enteredText = "";
-  String currentPath = "";
   boolean shift = false, caps = false;
   
   abstract void render();
@@ -68,6 +67,7 @@ abstract class KeyboardModule {
  */
 class H4Keyboard extends KeyboardModule {
   Tree<Direction> h4Tree;
+    String currentPath = "";
   
   H4Keyboard(Tree<Direction> h4Tree, TestHandler tHandler) {
     super(tHandler);
@@ -195,10 +195,13 @@ class H4Keyboard extends KeyboardModule {
  */
 class SoftKeyboard extends KeyboardModule {
   Graph<Direction> softGraph;
+  List<List<Button>> buttonList;
+  Button currentButton;
   
-  SoftKeyboard(Graph<Direction> softGraph, TestHandler tHandler) {
+  SoftKeyboard(Graph<Direction> softGraph, TestHandler tHandler, List<List<Button>> buttonList) {
     super(tHandler);
     this.softGraph = softGraph;
+    this.buttonList = buttonList;
   }
   
   /**
@@ -212,7 +215,27 @@ class SoftKeyboard extends KeyboardModule {
    * Accept current selection and add to text.
    */
   void accept() {
-    enteredText += softGraph.getCurrentContent();
+    String content = softGraph.getCurrentContent();
+    if (content == null) {
+      return;
+    }
+    
+    // Check if content is a special character.
+    if (content.matches("(\\[.*\\])")) {
+      this.handleSpecialChar(content);
+    } else {
+      // Just like on normal keyboards, capitalize if shift or caps
+      // is on, but not if both are on.
+      if (this.shift ^ this.caps) {
+        enteredText += content.toUpperCase();
+      } else {
+        enteredText += content;
+      }
+      // Turn off shift if we added alphanumeric.
+      shift = false;
+    }
+    
+    enteredText += content;
   }
   
   /**
