@@ -1,5 +1,5 @@
 /**
- * Class TreeNode
+ * Class TreeNode<T>
  * 
  * Contains a label and content. Links to 0-to-1 parent and 0-to-many
  * chilren TreeNodes.
@@ -57,7 +57,7 @@ class TreeNode<T> {
 }
 
 /**
- * Class Tree
+ * Class Tree<T>
  * 
  * Contains a root node and methods to add or search down paths. Also, the 
  * ability to crawl up and down the tree is provided.

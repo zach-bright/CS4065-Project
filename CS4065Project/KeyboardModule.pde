@@ -209,7 +209,7 @@ class SoftKeyboard extends KeyboardModule {
    */
   void render() {
     // Render all the buttons.
-    for (GraphNode n : this.softGraph.mapKeys) {
+    for (GraphNode n : this.softGraph.nodeMap.keySet()) {
       n.button.render();
     }
   }
@@ -246,20 +246,45 @@ class SoftKeyboard extends KeyboardModule {
     this.softGraph.crawl(direction);
   }
   
+  /**
+   * Handles all the hardcoded setup for button sizes. All of this code
+   * basically requires the config file to be exactly in a particular way,
+   * so basically its trash.
+   */
   void initializeButtons() {
-    int h = 50, w = 50;
-    int padding = 4;
+    int h = 50, w = 60, padding = 6;
+    int startingX = 90, startingY = 210;
+    int currentX = startingX, currentY = startingY;
     
-    int i = 0;
-    int startingY = 160, currentX = 60, currentY = 160;
-    for (GraphNode g : this.softGraph.mapKeys) {
-      g.button.setBox(currentX, currentY, w, h);
-      if (i++ % 4 == 3) {
+    Iterator<GraphNode> iter = this.softGraph.nodeMap.keySet().iterator();
+    
+    // The first 44 keys are a uniform 4x11 grid.
+    for (int i = 0; i < 44; i++) {
+      GraphNode node = iter.next();
+      node.button.setBox(currentX, currentY, w, h);
+      if (i % 4 == 3) {
         currentY = startingY;
         currentX += w + padding;
       } else {
         currentY += h + padding;
       }
+    }
+    
+    // The bottom row of the keyboard has to be handled specially.
+    currentX = startingX;
+    currentY = startingY + ((h + padding) * 4);
+    GraphNode shift = iter.next();
+    shift.button.setBox(currentX, currentY, (w * 2) + padding, h);
+    currentX += (w + padding) * 2;
+    GraphNode space = iter.next();
+    space.button.setBox(currentX, currentY, (w * 5) + (padding * 4), h);
+    currentX += (w + padding) * 5;
+    // Last 4 keys are all normal-sized.
+    GraphNode g;
+    for (int j = 0; j < 4; j++) {
+      g = iter.next();
+      g.button.setBox(currentX, currentY, w, h);
+      currentX += w + padding;
     }
   }
 }

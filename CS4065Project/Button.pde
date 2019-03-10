@@ -18,7 +18,7 @@ class Button {
   }
   
   void toggleSelected() {
-    this.isSelected = !this.isSelected; //<>//
+    this.isSelected = !this.isSelected;
   }
   
   void setBox(int x, int y, int w, int h) {
@@ -32,7 +32,7 @@ class Button {
   void render() {
     if (!this.isRenderable) {
       return;
-    } //<>//
+    } //<>// //<>//
     if (this.isSelected) {
       fill(buttonSelected);
     } else {

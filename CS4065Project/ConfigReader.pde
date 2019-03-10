@@ -37,35 +37,30 @@ class ConfigReader {
   }
   
   /**
-   * Construct a Graph from a saved config file, to be used
-   * in the soft keyboard.
+   * Construct a Graph from a saved config file, to be used in the soft kb.
    */
   public Graph<Direction> buildSoftGraph() throws IOException {
-    Graph<Direction> softGraph = new Graph();
+    DirectionalGraphBuilder dgb = new DirectionalGraphBuilder();
     
     String line;
     while ((line = configReader.readLine()) != null) {
-      // Config line has some key content, then a tab, then space-separated 
-      // neighbor keys in order U R D L (clockwise).
-      String[] splitLine = line.trim().split("\t");
+      // Each line has key content, then a tab, then tab-separated connections.
+      // So, split off the content and leave the connection list.
+      String[] splitLine = line.trim().split("\t", 2);
       String content = splitLine[0];
-      String[] neighbors = splitLine[1].split(" ");
+      // Each tab-separated connection string contains a space-separated list 
+      // of neighbor nodes that can be reached in a direction.
+      String[][] neighbors = new String[4][];
+      String[] unsplitNeighbors = splitLine[1].split("\t");
+      for (int i = 0; i < 4; i++) {
+        neighbors[i] = unsplitNeighbors[i].split(" ");
+      }
       
-      // Create a node representing this line's content.
-      GraphNode center = new GraphNode(content);
-      // Make a map from center to neighbor nodes and fill with content.
-      Map<Direction, GraphNode> neighborNodes = new HashMap<Direction, GraphNode>();
-      neighborNodes.put(Direction.UP, new GraphNode(neighbors[0]));
-      neighborNodes.put(Direction.RIGHT, new GraphNode(neighbors[1]));
-      neighborNodes.put(Direction.DOWN, new GraphNode(neighbors[2]));
-      neighborNodes.put(Direction.LEFT, new GraphNode(neighbors[3]));
-      // Add to the graph.
-      softGraph.addNode(center, neighborNodes);
+      dgb.addNode(content, neighbors);
     }
     
     // Set current node to "q".
-    softGraph.currentNode = softGraph.getNodeWithKey("q");
-    softGraph.currentNode.button.toggleSelected();
-    return softGraph;
+    dgb.setStartingPoint("q");
+    return dgb.getGraph();
   }
 }
