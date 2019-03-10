@@ -8,21 +8,15 @@ class GraphNode implements Comparable<GraphNode> {
   Button button;
   int buttonOrder = -1;
   
-  GraphNode(String content, Button button, int buttonOrder) {
-    this.content = content;
-    this.button = button;
-    this.buttonOrder = buttonOrder;
-  }
-  
   GraphNode(String content, int buttonOrder) {
     this.content = content;
-    this.button = new Button(content);
+    this.button = new Button(content.replaceAll("\\[|\\]", ""));
     this.buttonOrder = buttonOrder;
   }
   
   GraphNode(String content) {
     this.content = content;
-    this.button = new Button(content);
+    this.button = new Button(content.replaceAll("\\[|\\]", ""));
   }
   
   public int compareTo(GraphNode g) {
