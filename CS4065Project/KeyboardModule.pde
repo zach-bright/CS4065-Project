@@ -252,11 +252,10 @@ class SoftKeyboard extends KeyboardModule {
    * so basically its trash.
    */
   void initializeButtons() {
-    int h = 50, w = 50;
-    int padding = 4;
-    
+    int h = 50, w = 60, padding = 5;
     int startingX = 60, startingY = 160;
     int currentX = 60, currentY = 160;
+    
     Iterator<GraphNode> iter = this.softGraph.nodeMap.keySet().iterator();
     
     // The first 44 keys are a uniform 4x11 grid.
@@ -272,8 +271,8 @@ class SoftKeyboard extends KeyboardModule {
     }
     
     // The bottom row of the keyboard has to be handled specially.
-    currentX = startingX; 
-    currentY += currentY + w + padding;
+    currentX = startingX;
+    currentY += currentY + w;
     GraphNode shift = iter.next();
     shift.button.setBox(currentX, currentY, (w * 2) + padding, h);
     currentX += (w + padding) * 2;

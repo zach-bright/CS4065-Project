@@ -40,7 +40,7 @@ p	0	[enter]	'	o
 ?	'	$	-	.
 [bksp]	!	1	[enter]	0
 [enter]	[bksp]	q	[caps]	p
-[caps]	[etner]	a	$	'
+[caps]	[enter]	a	$	'
 $	[caps]	z	!	?
 [shift]	z x	[space]	1 2	!
 [space]	c v b n m	;	3 4 5 6 7	[shift]
