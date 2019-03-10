@@ -44,11 +44,17 @@ class ConfigReader {
     
     String line;
     while ((line = configReader.readLine()) != null) {
-      // Config line has some key content, then a tab, then space-separated 
-      // neighbor keys in order U R D L (clockwise).
-      String[] splitLine = line.trim().split("\t");
+      // Each line has key content, then a tab, then tab-separated connections.
+      // So, split off the content and leave the connection list.
+      String[] splitLine = line.trim().split("\t", 2);
       String content = splitLine[0];
-      String[] neighbors = splitLine[1].split(" ");
+      // Each tab-separated connection string contains a space-separated list 
+      // of neighbor nodes that can be reached in a direction.
+      String[][] neighbors = new String[4][];
+      String[] unsplitNeighbors = splitLine[1].split("\t");
+      for (int i = 0; i < 4; i++) {
+        neighbors[i] = unsplitNeighbors[i].split(" ");
+      }
       
       dgb.addNode(content, neighbors);
     }

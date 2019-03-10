@@ -48,27 +48,28 @@ class GraphNode implements Comparable<GraphNode> {
 /**
  * Class Graph<T>
  *
- * Contains a list of nodes. Helps with traversal by containing
- * a current node + methods to move to surrounding nodes.
- * Implemented using an adjacency list.
+ * Contains a list of nodes. Helps with traversal by containing a
+ * current node + methods to move to surrounding nodes. Implemented
+ * using a sort-of adjacency list, where a node maps to another map
+ * which relates T-ary directions to a list of nodes in that direction.
  */
 class Graph<T extends Enum<T>> {
   GraphNode currentNode;
   Class<T> labelEnum;
-  Map<GraphNode, Map<T, GraphNode>> nodeMap;
+  Map<GraphNode, Map<T, List<GraphNode>>> nodeMap;
   
   Graph(Class<T> labelEnum) {
     this.currentNode = null;
     this.labelEnum = labelEnum;
-    this.nodeMap = new TreeMap<GraphNode, Map<T, GraphNode>>();
+    this.nodeMap = new TreeMap<GraphNode, Map<T, List<GraphNode>>>();
   }
   
-  void addNode(GraphNode node, Map<T, GraphNode> neighbors) {
+  void addNode(GraphNode node, Map<T, List<GraphNode>> neighbors) {
     nodeMap.put(node, neighbors);
   }
   
   void addNode(GraphNode node) {
-    nodeMap.put(node, new EnumMap<T, GraphNode>(this.labelEnum));
+    nodeMap.put(node, new EnumMap<T, List<GraphNode>>(this.labelEnum));
   }
   
   GraphNode getNodeWithKey(String k) {
@@ -80,11 +81,10 @@ class Graph<T extends Enum<T>> {
     return null;
   }
   
-  // Crawl to a node with provided label. If none is found, return
-  // null and stay.
+  // Crawl to a node with provided label.
   GraphNode crawl(T label) {
     this.currentNode.button.toggleSelected(); //<>//
-    this.currentNode = nodeMap.get(this.currentNode).get(label);
+    this.currentNode = nodeMap.get(this.currentNode).get(label).get(0);
     this.currentNode.button.toggleSelected();
     return this.currentNode;
   }
@@ -118,18 +118,23 @@ class DirectionalGraphBuilder {
    * we store all nodes in a node->node map and check it before adding. 
    * If a node already exists, use it instead of making a new one.
    */
-  void addNode(String firstNode, String[] neighbors) {
+  void addNode(String firstNode, String[][] neighbors) {
     // Node-ify the first string (i.e. the "center")
     GraphNode node = this.getNonDupeNode(new GraphNode(firstNode));
     node.buttonOrder = this.currentButton++;
     
     // Node-ify the neighbor strings.
-    Map<Direction, GraphNode> neighborMap 
-      = new EnumMap<Direction, GraphNode>(Direction.class);
+    Map<Direction, List<GraphNode>> neighborMap 
+      = new EnumMap<Direction, List<GraphNode>>(Direction.class);
     GraphNode neighborNode;
-    for (int i = 0; i < 4; i++) {
-      neighborNode = this.getNonDupeNode(new GraphNode(neighbors[i]));
-      neighborMap.put(Direction.values()[i], neighborNode);
+    for (int i = 0; i < neighbors.length; i++) {
+      String[] dNeighbors = neighbors[i];
+      List<GraphNode> neighborList = new ArrayList<GraphNode>();
+      for (int j = 0; j < dNeighbors.length; j++) {
+        neighborNode = this.getNonDupeNode(new GraphNode(dNeighbors[j]));
+        neighborList.add(neighborNode);
+      }
+      neighborMap.put(Direction.values()[i], neighborList);
     }
     
     // Add to graph.
