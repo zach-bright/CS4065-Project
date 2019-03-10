@@ -209,7 +209,7 @@ class SoftKeyboard extends KeyboardModule {
    */
   void render() {
     // Render all the buttons.
-    for (GraphNode n : this.softGraph.mapKeys) {
+    for (GraphNode n : this.softGraph.nodeMap.keySet()) {
       n.button.render();
     }
   }
@@ -252,7 +252,7 @@ class SoftKeyboard extends KeyboardModule {
     
     int i = 0;
     int startingY = 160, currentX = 60, currentY = 160;
-    for (GraphNode g : this.softGraph.mapKeys) {
+    for (GraphNode g : this.softGraph.nodeMap.keySet()) {
       g.button.setBox(currentX, currentY, w, h);
       if (i++ % 4 == 3) {
         currentY = startingY;
