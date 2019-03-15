@@ -77,14 +77,67 @@ public class Joystick extends InputMethod {
   
   ControlIO control;
   ControlDevice device;
-  ControlButton selectionButton;
+  ControlButton selectionButton, upButton, downButton, leftButton, rightButton;
+  ControlButton lastPressed;
+  boolean pressed = false;
   ControlHat joystick;
 
   Joystick(PApplet applet, KeyboardModule kbModule) {
     super(applet, kbModule);
+    
     control = ControlIO.getInstance(this.applet);
-    device = control.getDevice("");         // TODO: figure out the controller we're using
-    selectionButton = device.getButton(""); // TODO: find name of button we're using
-    joystick = device.getHat("");           // TODO: also find joystick's name
+    List<ControlDevice> devices = control.getDevices();
+    for(ControlDevice controlDevice: devices){
+      if(controlDevice.toString().indexOf("XINPUT") > -1) {
+        device = control.getDevice(controlDevice.toString());
+        break;
+      }
+    }
+    selectionButton = device.getButton("Button 7");
+    upButton = device.getButton("Button 3");
+    downButton = device.getButton("Button 0");
+    leftButton = device.getButton("Button 2");
+    rightButton = device.getButton("Button 1");
+  }
+  
+  public void handleInput(){
+    Direction direction;
+    if(!pressed){
+      if(selectionButton.pressed()){
+        pressed = true;
+        lastPressed = selectionButton;
+        kbModule.accept();
+        return;
+      } else if(upButton.pressed()){
+        pressed = true;
+        lastPressed = upButton;
+        direction = Direction.UP;
+      } else if(downButton.pressed()){
+        pressed = true;
+        lastPressed = downButton;
+        direction = Direction.DOWN;
+      } else if(leftButton.pressed()){
+        pressed = true;
+        lastPressed = leftButton;
+        direction = Direction.LEFT;
+      } else if(rightButton.pressed()){
+        pressed = true;
+        lastPressed = rightButton;
+        direction = Direction.RIGHT;
+      } else {
+        return;
+      }
+      kbModule.move(direction);
+    }
+    checkRelease();
+  }
+  
+  public void checkRelease(){
+    if(pressed){
+      if(!lastPressed.pressed()){
+        pressed = false;
+        lastPressed = null;
+      }
+    }
   }
 }

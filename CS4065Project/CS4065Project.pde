@@ -63,6 +63,9 @@ void draw() {
   // Render keyboard UI.
   kbModule.render();
   
+  if(inMethod instanceof Joystick){
+    ((Joystick) inMethod).handleInput();
+  }
   if (isFinished) {
     // If all tests are done, notify user and exit.
     showExitDialog();
