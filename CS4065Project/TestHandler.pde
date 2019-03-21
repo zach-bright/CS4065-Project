@@ -65,8 +65,8 @@ class TestHandler {
       return 0.0;
     }
     
-    double wordCount = text.trim().split("\\s+").length; //<>// //<>// //<>//
-    double minutes = ((double)time / 1000) / 60;
+    double wordCount = text.trim().split("\\s+").length;  
+    double minutes = ((double)time / 1000) / 60; //<>//
     return wordCount / minutes;
   }
   
@@ -99,8 +99,8 @@ class TestHandler {
     }
     
     // Build up the distance array.
-    int subCost; //<>// //<>// //<>//
-    for (int j = 1; j <= p2Len; j++) {
+    int subCost;   
+    for (int j = 1; j <= p2Len; j++) { //<>//
       for (int i = 1; i <= p1Len; i++) {
         // If chars are the same, substitution is cost 0.
         if (p1.charAt(i - 1) == p2.charAt(j - 1)) {
