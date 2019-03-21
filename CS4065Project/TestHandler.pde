@@ -6,33 +6,47 @@
  * that happens after the user hits the [enter] key.
  */
 class TestHandler {
-  PrintWriter writer;
-  String[] phrases;
-  String currentPhrase;
-  int currentPhraseIndex, trialCount;
+  final int practiceCount = 2;
+  final int testCount = 2;
   
+  PrintWriter writer;
+  List<String> phrases;
+  String currentPhrase;
+  boolean isPractice;
+  int trialCount;
   int trialStartTime;
   
-  TestHandler(String[] phrases, String outputFileName) {
+  TestHandler(List<String> phrases, String outputFileName) {
     this.phrases = phrases;
     this.writer = createWriter(outputFileName);
-    this.currentPhraseIndex = 0;
-    this.currentPhrase = phrases[0];
-    // TODO: set this once we enable the trials (or something...)
+    this.currentPhrase = this.getPhrase();
     this.trialCount = 1;
+    this.isPractice = true;
     
     // Write header line.
     this.writer.println("Trial #\tTime Elapsed (ms)\tWPM\tL Distance");
   }
   
   /**
-   * Record a test as being completed.
+   * Record a test as being completed. If in practice round, do nothing.
    */
   public void recordTest(String enteredText) {
+    if (trialCount < practiceCount) {
+      return;
+    } else if (isPractice) {
+      showRecordingPopup();
+      isPractice = false;
+    }
+    
     int trialTime = millis() - trialStartTime;
     int distance = this.levenshteinDistance(currentPhrase, enteredText);
     String wpmString = String.format("%.4f", this.wpm(enteredText, trialTime));
-    this.writer.println(trialCount + "\t" + trialTime + "\t" + wpmString + "\t" + distance);
+    this.writer.println(
+      (trialCount - practiceCount) + "\t" 
+      + trialTime + "\t" 
+      + wpmString + "\t" 
+      + distance
+    );
   }
   
   /**
@@ -41,7 +55,7 @@ class TestHandler {
    * parent class (CS4065Project).
    */
   public void nextTest() {
-    if (currentPhraseIndex >= phrases.length - 1) {
+    if (trialCount >= practiceCount + testCount) {
       this.writer.flush();
       this.writer.close();
       triggerExit();
@@ -50,9 +64,20 @@ class TestHandler {
     
     // Setup for next trial.
     this.trialCount++;
-    this.currentPhraseIndex++;
-    this.currentPhrase = this.phrases[this.currentPhraseIndex];
+    this.currentPhrase = this.getPhrase();
     trialStartTime = millis();
+  } //<>//
+  
+  /**
+   * Selects a phrase at random, removing it to avoid duplicates.
+   */
+  private String getPhrase() {
+    if (phrases.size() == 0) {
+      return "";
+    }
+    String phrase = phrases.get(int(random(phrases.size())));
+    phrases.remove(phrase);
+    return phrase;
   }
   
   /**
@@ -65,7 +90,7 @@ class TestHandler {
       return 0.0;
     }
     
-    double wordCount = text.trim().split("\\s+").length; //<>// //<>// //<>//
+    double wordCount = text.trim().split("\\s+").length;  
     double minutes = ((double)time / 1000) / 60;
     return wordCount / minutes;
   }
@@ -75,7 +100,7 @@ class TestHandler {
    * of deletions, insertions, or substitutions needed to turn phrase1
    * into phrase2. This uses dynamic programming.
    */
-  private int levenshteinDistance(String p1, String p2) {
+  private int levenshteinDistance(String p1, String p2) { //<>//
     int p1Len = p1.length();
     int p2Len = p2.length();
     
@@ -99,7 +124,7 @@ class TestHandler {
     }
     
     // Build up the distance array.
-    int subCost; //<>// //<>// //<>//
+    int subCost;   
     for (int j = 1; j <= p2Len; j++) {
       for (int i = 1; i <= p1Len; i++) {
         // If chars are the same, substitution is cost 0.
