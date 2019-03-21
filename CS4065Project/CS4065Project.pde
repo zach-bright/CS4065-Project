@@ -51,6 +51,8 @@ void setup() {
     // Ask user for the two conditions.
     kbModule = buildKeyboardModule();
     inMethod = buildInputMethod();
+    
+    showPracticePopup();
   } catch (IOException ioe) {
     JOptionPane.showMessageDialog(null, "Config format incorrect: " + ioe.getMessage());
     exit();
@@ -159,6 +161,26 @@ void drawCommonUI(String presentedText, String enteredText) {
   // Draw rectangle that the keyboard will be drawn over.
   fill(highlight);
   rect(60, 160, 780, 390);
+}
+
+/**
+ * Tell user that the next trials will be practice.
+ */
+void showPracticePopup() {
+  JOptionPane.showMessageDialog(
+    null,
+    "The following trials are for practice and will not be recorded."
+  );
+}
+
+/**
+ * Tell user that the next trials will be recorded.
+ */
+void showRecordingPopup() {
+  JOptionPane.showMessageDialog(
+    null, 
+    "Practice complete. The following trials will be recorded."
+  );
 }
 
 /**
