@@ -43,7 +43,10 @@ void setup() {
     String timestamp = day() + "-" + month() + "-" + year();
     String outputFileName = "User-" + userId + "_" + timestamp + ".txt";
     String[] phraseList = loadStrings(configFolder + File.separator + configPhrases);
-    tHandler = new TestHandler(phraseList, outputFileName);
+    tHandler = new TestHandler(
+      new ArrayList<String>(Arrays.asList(phraseList)), 
+      outputFileName
+    );
     
     // Ask user for the two conditions.
     kbModule = buildKeyboardModule();
