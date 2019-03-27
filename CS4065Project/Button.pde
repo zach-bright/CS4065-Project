@@ -32,7 +32,7 @@ class Button {
   void render() {
     if (!this.isRenderable) {
       return;
-    }   //<>//
+    } //<>//
     if (this.isSelected) {
       fill(buttonSelected);
     } else {
