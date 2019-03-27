@@ -77,7 +77,7 @@ class Graph<T extends Enum<T>> {
   
   // Crawl to a node with provided label.
   GraphNode crawl(T label) {
-    this.currentNode.button.toggleSelected(); //<>//
+    this.currentNode.button.toggleSelected(); //<>// //<>// //<>// //<>//
     this.currentNode = nodeMap.get(this.currentNode).get(label).get(0);
     this.currentNode.button.toggleSelected();
     return this.currentNode;

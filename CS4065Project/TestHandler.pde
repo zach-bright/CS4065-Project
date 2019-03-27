@@ -6,22 +6,21 @@
  * that happens after the user hits the [enter] key.
  */
 class TestHandler {
-  final int practiceCount = 2;
-  final int testCount = 2;
   
   PrintWriter writer;
   List<String> phrases;
   String currentPhrase;
   boolean isPractice;
-  int trialCount;
-  int trialStartTime;
+  int trialCount, trialStartTime, practiceCount, testCount;
   
-  TestHandler(List<String> phrases, String outputFileName) {
+  TestHandler(List<String> phrases, String outputFileName, int practice, int test) {
     this.phrases = phrases;
     this.writer = createWriter(outputFileName);
     this.currentPhrase = this.getPhrase();
     this.trialCount = 1;
     this.isPractice = true;
+    this.practiceCount = practice;
+    this.testCount = test;
     
     // Write header line.
     this.writer.println("Trial #\tTime Elapsed (ms)\tWPM\tL Distance");
@@ -66,12 +65,12 @@ class TestHandler {
     this.trialCount++;
     this.currentPhrase = this.getPhrase();
     trialStartTime = millis();
-  }  //<>//
-  
+  } 
+   //<>// //<>// //<>// //<>//
   /**
    * Selects a phrase at random, removing it to avoid duplicates.
-   */ //<>//
-  private String getPhrase() {
+   */
+  private String getPhrase() { //<>// //<>// //<>// //<>//
     if (phrases.size() == 0) {
       return "";
     }
@@ -100,12 +99,12 @@ class TestHandler {
    * of deletions, insertions, or substitutions needed to turn phrase1
    * into phrase2. This uses dynamic programming.
    */
-  private int levenshteinDistance(String p1, String p2) {  //<>//
-    int p1Len = p1.length();
+  private int levenshteinDistance(String p1, String p2) { 
+    int p1Len = p1.length(); //<>// //<>// //<>// //<>//
     int p2Len = p2.length();
     
-    if (p1Len == 0) { //<>//
-      return p2Len;
+    if (p1Len == 0) {
+      return p2Len; //<>// //<>// //<>// //<>//
     }
     if (p2Len == 0) {
       return p1Len;
