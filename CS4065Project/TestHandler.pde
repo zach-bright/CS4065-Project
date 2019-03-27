@@ -66,11 +66,11 @@ class TestHandler {
     this.currentPhrase = this.getPhrase();
     trialStartTime = millis();
   } 
-   //<>// //<>// //<>// //<>//
+      
   /**
    * Selects a phrase at random, removing it to avoid duplicates.
    */
-  private String getPhrase() { //<>// //<>// //<>// //<>//
+  private String getPhrase() {    
     if (phrases.size() == 0) {
       return "";
     }
@@ -100,11 +100,11 @@ class TestHandler {
    * into phrase2. This uses dynamic programming.
    */
   private int levenshteinDistance(String p1, String p2) { 
-    int p1Len = p1.length(); //<>// //<>// //<>// //<>//
+    int p1Len = p1.length();    
     int p2Len = p2.length();
     
     if (p1Len == 0) {
-      return p2Len; //<>// //<>// //<>// //<>//
+      return p2Len;    
     }
     if (p2Len == 0) {
       return p1Len;
