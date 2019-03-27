@@ -10,7 +10,7 @@ final String configFolder = "config";
 final String configH4 = "h4-connections.txt";
 final String configSoft = "soft-connections.txt";
 final String configPhrases = "phrases.txt";
-final String outputFile = "records.txt";
+final String configPhraseCount = "phrase-count.txt";
 
 final color black = #252525;
 final color buttonUnselected = #FFFFFF;
@@ -38,17 +38,32 @@ void setup() {
   enteredTextFont = loadFont("Georgia-26.vlw");
   
   try {
+    // Ask for keyboard and input conditions.
+    kbCondition = getKbCondition();
+    inCondition = getInputCondition();
+    
     // Get user ID, use it to make output filename, build test handler obj.
     userId = getUserId();
     String timestamp = day() + "-" + month() + "-" + year();
-    String outputFileName = "User-" + userId + "_" + timestamp + ".txt";
+    // kb and in condition are added to avoid overwriting files.
+    String outputFileName = 
+      "User-" + userId + "_" + "cond-" + kbCondition + "-" + inCondition + "_" + timestamp + ".txt";
+    
+    // Get phrase list and phrase count data and create test handler.
     String[] phraseList = loadStrings(configFolder + File.separator + configPhrases);
+    String[] phraseCounts = loadStrings(configFolder + File.separator + configPhraseCount);
+    for (int i = 0; i < phraseCounts.length; i++) {
+      String s = phraseCounts[i];
+      phraseCounts[i] = s.substring(s.indexOf("=") + 1);
+    }
     tHandler = new TestHandler(
       new ArrayList<String>(Arrays.asList(phraseList)), 
-      outputFileName
+      outputFileName,
+      int(phraseCounts[0]),
+      int(phraseCounts[1])
     );
     
-    // Ask user for the two conditions.
+    // Create kb and input modules.
     kbModule = buildKeyboardModule();
     inMethod = buildInputMethod();
     
@@ -89,16 +104,31 @@ String getUserId() {
 }
 
 /**
- * Ask what keyboard to use, then builds and returns corresponding KB module.
+ * Ask user for the keyboard condition value.
  */
-KeyboardModule buildKeyboardModule() throws IOException {
-  // Get condition value.
-  kbCondition = JOptionPane.showOptionDialog(frame, 
+int getKbCondition() {
+  return JOptionPane.showOptionDialog(frame, 
     "Please choose 1st condition.", "Condition", 
     JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, 
     null, new String[] {"Condition A", "Condition B"}, 0
   );
-  
+}
+
+/**
+ * Ask user for the input condition value.
+ */
+int getInputCondition() {
+  return JOptionPane.showOptionDialog(frame, 
+    "Please choose 2nd condition.", "Condition", 
+    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, 
+    null, new String[] {"Condition A", "Condition B"}, 0
+  );
+}
+
+/**
+ * Ask what keyboard to use, then builds and returns corresponding KB module.
+ */
+KeyboardModule buildKeyboardModule() throws IOException {
   KeyboardModule chosenKB;
   if (kbCondition == 0) {
     // Condition 0 is for the H4-Writer keyboard.
@@ -122,13 +152,6 @@ KeyboardModule buildKeyboardModule() throws IOException {
  * Ask what method to use, then builds and returns corresponding input method.
  */
 InputMethod buildInputMethod() throws IOException {
-  // Get condition value.
-  inCondition = JOptionPane.showOptionDialog(frame, 
-    "Please choose 2nd condition.", "Condition", 
-    JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, 
-    null, new String[] {"Condition A", "Condition B"}, 0
-  );
-  
   InputMethod chosenIn;
   if (inCondition == 0) {
     // Condition 0 is for WASD input.

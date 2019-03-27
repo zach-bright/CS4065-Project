@@ -73,8 +73,6 @@ public class WASD extends InputMethod {
  * U, D, L, or R. Also handle polling accept button (on controller).
  */
 public class Joystick extends InputMethod {
-  private final float deadzoneRadius = 0.7;
-  
   ControlIO control;
   ControlDevice device;
   ControlButton selectionButton, upButton, downButton, leftButton, rightButton;
